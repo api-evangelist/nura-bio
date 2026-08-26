@@ -1,0 +1,133 @@
+generated: '2026-08-26'
+method: derived
+source: >-
+  openapi/nura-bio-content-api-openapi.yml + openapi/_original/nura-bio-wp-json-route-index.json + live
+  response headers and error bodies observed on nurabio.com 2026-08-26
+note: >-
+  Cross-cutting request/response semantics of the Nura Bio content API. Nura Bio publishes no API
+  conventions documentation of its own; everything below is the WordPress REST contract as it is actually
+  deployed here, derived from the published route index and confirmed against live anonymous responses.
+  Idempotency is deliberately NOT claimed and NO `Idempotency` pointer is emitted in apis.yml — this
+  deployment exposes no idempotency key, no request-deduplication contract, and no anonymous write surface
+  at all.
+authentication:
+  style: none
+  detail: >-
+    No credentials required and none accepted for the catalogued surface. The /wp-json/ index advertises
+    only WordPress Application Passwords, an administrative credential with no public issuance path.
+    See authentication/nura-bio-authentication.yml.
+idempotency:
+  supported: na
+  header: null
+  detail: >-
+    Not applicable. Every catalogued operation is a GET and therefore idempotent by HTTP method alone,
+    which is not an idempotency contract. `Allow: GET` is returned on the collection routes anonymously.
+    There is no Idempotency-Key header, no client-supplied request identifier and no documented replay
+    semantics anywhere in the route index.
+pagination:
+  style: page-number
+  params:
+    page: Current page of the collection. 1-based, default 1.
+    per_page: Items per page. Minimum 1, maximum 100, default 10.
+    offset: Alternative absolute offset into the result set.
+  response_headers:
+    X-WP-Total: Total number of matching items.
+    X-WP-TotalPages: Total number of pages available.
+  link_header: >-
+    RFC 8288 Link header carrying rel="next" and rel="prev". Observed on /wp/v2/posts?per_page=1 as
+    <https://nurabio.com/wp-json/wp/v2/posts?per_page=1&page=2>; rel="next".
+  cors_exposure: >-
+    Access-Control-Expose-Headers advertises X-WP-Total, X-WP-TotalPages and Link, so browser clients can
+    read the pagination headers cross-origin.
+  bounds_error: >-
+    per_page above 100 returns HTTP 400 rest_invalid_param with a per-parameter `params` map and a
+    structured `details` block naming rest_out_of_bounds — it does not silently clamp. Verified 2026-08-26.
+field_selection:
+  supported: true
+  params:
+    _fields: Comma-separated allow-list of top-level response fields. Verified working 2026-08-26.
+    _embed: Inline embeddable resources (author, featured media, terms) under _embedded.
+    _envelope: Wrap the response body, status and headers in a single JSON envelope.
+  context:
+    param: context
+    values: [view, embed, edit]
+    detail: Anonymously only `view` and `embed` return data; `edit` returns 401 rest_forbidden.
+sorting_and_filtering:
+  order: asc | desc
+  orderby: Per-collection enum — date, id, title, slug, modified, author, include, relevance, menu_order.
+  date_windows: after, before, modified_after, modified_before (ISO 8601).
+  identity: include / exclude / slug.
+  full_text: search, with search_columns (post_title, post_content, post_excerpt) and search_semantics.
+  taxonomy: categories, categories_exclude, tags, tags_exclude, tax_relation (AND | OR) on /wp/v2/posts.
+metadata:
+  field: meta
+  detail: >-
+    A `meta` object is present on post-like resources but only registered meta keys are exposed; no custom
+    keys are surfaced anonymously on this deployment.
+  extensions_observed:
+  - >-
+    All in One SEO (v5.0.0.1) renders the site's structured metadata and also generates the /llms.txt
+    served at the site root.
+  - >-
+    The Avada theme registers the `portfolio` custom post type and the `portfolio_entries` taxonomy, which
+    on this deployment carry the leadership / board / founders people directory rather than a work portfolio.
+request_tracing:
+  request_id_header: null
+  detail: >-
+    No provider request identifier. Cloudflare returns `cf-ray` on every response, which is an edge trace
+    token and not an application-level correlation id. Kinsta adds `ki-cf-cache-status`, `ki-edge`,
+    `ki-origin` and `x-kinsta-cache` cache-state headers.
+versioning:
+  scheme: uri-path-namespace
+  current: wp/v2
+  detail: >-
+    The version is the namespace segment in the path. Namespaces registered on this deployment are
+    oembed/1.0, aioseo/v1, duplicate-post/v1, wp-analytify/v1, wp/v2, wp-site-health/v1, wp-block-editor/v1
+    and wp-abilities/v1. Nura Bio does not control this versioning — it moves with WordPress core and the
+    installed plugins. See lifecycle/nura-bio-lifecycle.yml.
+error_envelope:
+  format: wordpress-rest
+  rfc9457: false
+  content_type: application/json
+  shape: '{ code: string, message: string, data: { status: int, params?: object, details?: object } }'
+  detail: >-
+    Not RFC 9457. There is no application/problem+json representation, no `type` URI and no `title`/`detail`
+    split. See errors/nura-bio-problem-types.yml for the observed catalogue.
+rate_limit_signaling:
+  headers: []
+  detail: >-
+    No RateLimit-*, X-RateLimit-* or Retry-After header was returned on any observed response, and no limit
+    is documented. See rate-limits/nura-bio-rate-limits.yml.
+caching:
+  headers_observed: [cf-cache-status, ki-cf-cache-status, x-kinsta-cache, vary]
+  detail: >-
+    REST responses are served DYNAMIC / BYPASS at both the Cloudflare and Kinsta layers — they are not
+    edge-cached. No Cache-Control, ETag or Last-Modified was returned on the probed REST responses, so
+    conditional requests are not supported on this surface.
+cors:
+  allow_origin: 'reflects the request Origin (verified with Origin: https://example.com)'
+  allow_credentials: true
+  allow_methods: [OPTIONS, GET, POST, PUT, PATCH, DELETE]
+  allow_headers: [Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type]
+  detail: >-
+    The preflight advertises the full WordPress method set, but anonymously the collection routes return
+    `Allow: GET` and every write is rejected. Browser clients can call the read surface cross-origin.
+reversibility:
+  applicable: false
+  grade: na
+  write_surface: none
+  detail: >-
+    The catalogued surface is read-only: all 24 operations are GET, and `Allow: GET` is returned
+    anonymously on the collection routes. There is nothing an agent can do here that would need taking
+    back, so reversibility, dry_run_mode and idempotency are all `na` rather than zero. WordPress core does
+    register write, trash and restore semantics (DELETE with force=false moves a post to trash and
+    /wp/v2/posts/{id} POST with status=publish restores it), but that surface is authentication-gated on
+    this deployment, is not part of the catalogued contract, and Nura Bio documents no window or policy for
+    it — so no window is asserted here.
+  operations: []
+cross_links:
+  errors: errors/nura-bio-problem-types.yml
+  lifecycle: lifecycle/nura-bio-lifecycle.yml
+  authentication: authentication/nura-bio-authentication.yml
+  rate_limits: rate-limits/nura-bio-rate-limits.yml
+  data_model: data-model/nura-bio-data-model.yml

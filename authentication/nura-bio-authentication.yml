@@ -1,0 +1,68 @@
+generated: '2026-08-26'
+method: probed
+source: >-
+  https://nurabio.com/wp-json/ authentication block, plus live anonymous and gated responses observed
+  2026-08-26 against openapi/nura-bio-content-api-openapi.yml
+note: >-
+  Nura Bio publishes no authentication documentation, because it publishes no developer program. This
+  profile is what the deployment actually does, read from the WordPress REST route index and confirmed
+  against live responses. The catalogued read surface requires NO credentials; the credentialed surface
+  exists but is for site administrators, not for API consumers, and no self-service path to a credential
+  is offered to the public.
+summary:
+  anonymous_read: true
+  credential_required_for_catalogued_operations: false
+  self_service_credential_available: false
+  oauth2: false
+  openid_connect: false
+  mutual_tls: false
+schemes:
+- id: none
+  type: none
+  applies_to: >-
+    All 24 GET operations in openapi/nura-bio-content-api-openapi.yml. Verified anonymously on 2026-08-26.
+  detail: >-
+    No API key, token, cookie or signature is required or accepted for the catalogued read operations. The
+    OpenAPI therefore declares no securitySchemes — an accurate absence, not an omission. Running
+    0-working/derive-authentication.py against this repo correctly returns zero schemes.
+- id: application-passwords
+  type: http
+  scheme: basic
+  applies_to: The authentication-gated remainder of the deployment. NOT part of the catalogued surface.
+  advertised_at: https://nurabio.com/wp-json/
+  authorization_endpoint: https://nurabio.com/wp-admin/authorize-application.php
+  detail: >-
+    The route index `authentication` object advertises WordPress Application Passwords and nothing else.
+    These are per-user credentials minted from inside wp-admin by an existing site user; there is no
+    registration, no developer signup and no public issuance path, so this is an administrative credential
+    rather than an API product credential. Not exercised — API Evangelist holds no credentials for this
+    site and never attempts to obtain any.
+gated_surface_observed:
+  note: Observed anonymously on 2026-08-26; each returned the WordPress rest_forbidden envelope.
+  responses:
+  - path: /wp-json/wp/v2/settings
+    status: 401
+    code: rest_forbidden
+  - path: /wp-json/wp-abilities/v1/abilities
+    status: 401
+    code: rest_forbidden
+    detail: >-
+      The WordPress Abilities API registry — the layer a WordPress MCP adapter would expose as tools. Present
+      as a namespace but not anonymously enumerable, so no tool list could be read. See mcp/nura-bio-mcp.yml.
+  - path: /wp-json/aioseo/v1/options
+    status: 401
+    code: rest_forbidden
+  - path: /wp-json/aioseo/v1/ai-agents/mcp-adapter/release
+    status: 401
+    code: rest_forbidden
+  - path: /wp-json/wp/v2/comments
+    status: 403
+    code: rest_comment_disabled
+    detail: Comments are switched off site-wide, so the collection is unreachable rather than credential-gated.
+context_parameter:
+  param: context
+  anonymous_values: [view, embed]
+  gated_values: [edit]
+  detail: >-
+    `context=edit` returns 401 rest_forbidden on every collection. The anonymous projection omits author
+    email, user roles, and unpublished content.

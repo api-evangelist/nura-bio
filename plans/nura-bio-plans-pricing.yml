@@ -1,0 +1,38 @@
+generated: '2026-08-26'
+method: searched
+source: https://nurabio.com/ (full site walked 2026-08-26; no pricing, plans or signup page exists)
+plan_count: 0
+note: >-
+  Nura Bio publishes no plans, no pricing and no commercial API terms, because it sells no API. It is a
+  clinical-stage biopharmaceutical company whose product is a drug pipeline (NB-4746 and NB-9402, oral
+  SARM1 inhibitors), not software. The content API catalogued in this repo is the WordPress CMS surface
+  behind its marketing site: it is free and anonymous because it was never productised, not because a free
+  tier was offered. Recorded as an honest zero rather than omitted.
+plans: []
+evidence:
+- url: https://nurabio.com/
+  status: 200
+  note: >-
+    Six-page site. Navigation is Home / About Us / Our Science / News & Literature / Join Us / Contact.
+    No pricing, plans, products, developers or signup entry exists anywhere in it.
+- url: https://nurabio.com/wp-json/wp/v2/pages?per_page=100
+  status: 200
+  note: >-
+    Authoritative page inventory read from the API itself — exactly 6 published pages, matching the
+    navigation. There is no unlinked pricing page.
+- url: https://nurabio.com/llms.txt
+  status: 200
+  note: >-
+    The provider's own llms.txt enumerates every page, post and portfolio item on the site. It lists no
+    pricing, plans, product or developer page, corroborating the absence from the provider's own account of
+    its site.
+commercial_posture:
+  api_monetised: false
+  signup_available: false
+  free_tier: 'n/a — no tiers exist'
+  detail: >-
+    No signup, login, account, trial, quote or contact-sales-for-API path exists. The only contact surface
+    is the general corporate form at https://nurabio.com/contact/. Nura Bio's capital comes from venture
+    financing — a $73M Series A (2020), a $68M extension past $140M total, and a $73.8M Series B in June
+    2026 led by The Column Group with Euclidean Capital, Samsara BioCapital and Sanofi Ventures — not from
+    API revenue.

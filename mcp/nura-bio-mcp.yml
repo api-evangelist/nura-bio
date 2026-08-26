@@ -1,0 +1,93 @@
+generated: '2026-08-26'
+method: probed
+source: >-
+  live probes of nurabio.com 2026-08-26 + openapi/_original/nura-bio-wp-json-route-index.json
+status: candidate
+note: >-
+  Nura Bio ships NO MCP server. This file records that measured absence and the candidate tool surface that
+  COULD be projected from the catalogued content API — it is not a server and must not be read as one.
+  Deliberately, NO `MCPServer` pointer is emitted in apis.yml: that pointer asserts the provider operates
+  an agent surface, and emitting it for a derived candidate would credit Nura Bio with 12 agent-readiness
+  points and 4 experience points for something nobody can call.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: none
+  verified: probed
+probes:
+- url: https://nurabio.com/mcp
+  status: 404
+  note: Falls through to the Avada theme 404 template.
+- url: https://nurabio.com/wp-json/mcp
+  status: 404
+  code: rest_no_route
+  note: >-
+    No `mcp` namespace is registered. Contrast all/enveda-biosciences/, another WordPress biotech in this
+    catalogue, where an `mcp` namespace IS registered and serves an authentication-gated adapter endpoint.
+- url: https://nurabio.com/wp-json/wp-abilities/v1/abilities
+  status: 401
+  code: rest_forbidden
+  note: >-
+    The WordPress Abilities API registry — the layer a WordPress MCP adapter exposes as tools. The
+    namespace is registered (WordPress core ships it) but the registry is not anonymously enumerable, so no
+    tool list could be read. Without a registered `mcp` namespace there is no adapter exposing it anyway.
+- url: https://nurabio.com/wp-json/aioseo/v1/ai-agents/mcp-adapter/release
+  status: 401
+  code: rest_forbidden
+  note: >-
+    All in One SEO ships MCP-adapter INSTALL routes (`install-mcp-adapter`, `mcp-adapter/release`). Their
+    presence means the plugin CAN install an adapter, not that one is installed. The absence of any `mcp`
+    namespace in the route index confirms it is not.
+- url: https://nurabio.com/wp-json/mcp/mcp-adapter-default-server
+  status: 404
+  method: 'POST {"jsonrpc":"2.0","id":1,"method":"tools/list"} with Accept: application/json, text/event-stream'
+  note: >-
+    The default WordPress MCP Adapter server path, probed directly with a real JSON-RPC tools/list. Returned
+    404, not an OAuth challenge — the endpoint does not exist, as opposed to existing behind auth.
+- url: https://nurabio.com/.well-known/agent-card.json
+  status: 404
+- url: https://nurabio.com/.well-known/agent.json
+  status: 404
+oauth_discovery:
+  note: Probed anonymously per the contract to feed scopes/, authentication/ and conformance/.
+  documents:
+  - url: https://nurabio.com/.well-known/oauth-authorization-server
+    status: 404
+  - url: https://nurabio.com/.well-known/oauth-protected-resource
+    status: 404
+    note: Verified 2026-08-26. No protected-resource metadata, consistent with there being no OAuth surface.
+candidate_tools:
+  note: >-
+    DERIVED, NOT PUBLISHED. Each row below binds to a real operationId in
+    openapi/nura-bio-content-api-openapi.yml and would inherit that operation's parameters as its
+    inputSchema. Provided so a downstream forge (or Nura Bio itself) has a grounded starting point. No such
+    tool exists today.
+  tools:
+  - name: search_nura_bio_content
+    rest: [search]
+    description: Full-text search across Nura Bio news posts, site pages and people profiles.
+  - name: list_news
+    rest: [listPosts]
+    description: List the company news archive — financings, clinical milestones and publications.
+  - name: get_news_item
+    rest: [getPost]
+    description: Retrieve one news post in full.
+  - name: list_pages
+    rest: [listPages]
+    description: List the evergreen site pages (About Us, Our Science, Join Us, Contact).
+  - name: get_page
+    rest: [getPage]
+    description: Retrieve one site page in full.
+  - name: list_people
+    rest: [listPortfolioItems, listPortfolioEntries]
+    description: >-
+      List the leadership team, board of directors, and founders and advisors, optionally filtered by
+      grouping.
+  - name: get_person
+    rest: [getPortfolioItem]
+    description: Retrieve one leadership, board or founder profile.
+  - name: list_media
+    rest: [listMedia, getMediaItem]
+    description: List or fetch media library assets — logos, headshots, figures and press documents.

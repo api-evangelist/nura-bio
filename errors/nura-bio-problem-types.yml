@@ -1,0 +1,99 @@
+generated: '2026-08-26'
+method: derived
+source: >-
+  openapi/nura-bio-content-api-openapi.yml responses + live error bodies observed on nurabio.com 2026-08-26
+note: >-
+  Nura Bio publishes no error reference, because it publishes no developer documentation. This catalogue is
+  the WordPress REST error contract as this deployment actually returns it. Each entry below with
+  `observed: true` was elicited by a real anonymous request on 2026-08-26 and the envelope recorded verbatim.
+format: wordpress-rest
+rfc9457: false
+content_type: application/json
+envelope:
+  code: Machine-readable error slug. This is the stable identifier a client should branch on.
+  message: Human-readable English message. Not stable; do not match on it.
+  data.status: The HTTP status code, repeated inside the body.
+  data.params: Present on validation failures — a map of parameter name to a human-readable reason.
+  data.details: >-
+    Present on validation failures — a map of parameter name to a nested {code, message, data} object
+    carrying the specific validation code, e.g. rest_out_of_bounds.
+problem_types:
+- code: rest_invalid_param
+  status: 400
+  title: A query parameter failed validation
+  observed: true
+  observed_at: /wp-json/wp/v2/posts?per_page=101
+  message: 'Invalid parameter(s): per_page'
+  detail: >-
+    Returned when any query parameter falls outside the enum, type or bounds declared for it in the route
+    index. Carries both data.params and data.details; data.details.<param>.code names the precise failure
+    (rest_out_of_bounds was returned here).
+  remediation: >-
+    Read data.details for the offending parameter and its constraint. per_page is bounded to 1..100
+    inclusive; the API rejects rather than clamps.
+- code: rest_forbidden
+  status: 401
+  title: The requested context or collection requires authentication
+  observed: true
+  observed_at: /wp-json/wp/v2/settings, /wp-json/wp-abilities/v1/abilities, /wp-json/aioseo/v1/options
+  message: Sorry, you are not allowed to do that.
+  detail: >-
+    Returned for every credentialed surface on this deployment, and for context=edit on any collection.
+    Note the status is 401 with no WWW-Authenticate header.
+  remediation: >-
+    Not remediable by a public client — no self-service credential exists for this site. Use context=view
+    or context=embed and stay on the catalogued read surface.
+- code: rest_comment_disabled
+  status: 403
+  title: Comments are disabled
+  observed: true
+  observed_at: /wp-json/wp/v2/comments
+  message: Comments are disabled.
+  detail: >-
+    The /wp/v2/comments collection is registered in the route index but switched off site-wide, so it is
+    unreachable rather than credential-gated. It is therefore excluded from the catalogued OpenAPI.
+  remediation: None. Do not call this collection.
+- code: rest_post_invalid_id
+  status: 404
+  title: Invalid post ID
+  observed: true
+  observed_at: /wp-json/wp/v2/posts/999999
+  message: Invalid post ID.
+  detail: Returned by the post-like item routes (posts, pages, portfolio, media) for an unknown numeric id.
+  remediation: List the collection first and use an id from it.
+- code: rest_no_route
+  status: 404
+  title: No route matched
+  observed: true
+  observed_at: /wp-json/wp/v2/nope
+  message: No route was found matching the URL and request method.
+  detail: >-
+    Returned when the path is not a registered route, or when the method is not registered for that route.
+    Distinguishes a wrong path from a wrong id.
+  remediation: >-
+    Fetch https://nurabio.com/wp-json/ and check the `routes` map — it is the authoritative index for this
+    deployment.
+- code: rest_term_invalid
+  status: 404
+  title: Term does not exist
+  observed: false
+  detail: >-
+    Declared by WordPress core for the taxonomy item routes (categories, tags, portfolio_entries). Not
+    elicited here because it was not needed to establish the contract; recorded as declared-not-observed.
+  remediation: List the taxonomy collection and use an id from it.
+- code: rest_user_invalid_id
+  status: 404
+  title: Invalid user ID
+  observed: false
+  detail: Declared by WordPress core for /wp/v2/users/{id}. Recorded as declared-not-observed.
+  remediation: List /wp/v2/users and use an id from it.
+gaps:
+- >-
+  No RFC 9457 problem+json representation is offered, so an agent cannot rely on a `type` URI to
+  disambiguate; it must branch on the `code` string.
+- >-
+  401 is returned without a WWW-Authenticate header, so a client cannot discover the challenge scheme from
+  the response alone.
+- >-
+  There is no 429 in this catalogue: no rate limit is documented and none was observed. See
+  rate-limits/nura-bio-rate-limits.yml.

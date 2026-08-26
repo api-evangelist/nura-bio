@@ -1,0 +1,35 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  npm, PyPI, RubyGems, crates.io, Maven Central, NuGet, pkg.go.dev and Packagist searched 2026-08-26, plus
+  a GitHub organization search; nurabio.com carries no SDK or downloads page
+package_count: 0
+official_package_count: 0
+note: >-
+  Nura Bio publishes no client libraries, no SDKs and no CLI, and operates no GitHub organization. Searches
+  for "nura bio" / "nurabio" across the public registries return only unrelated projects belonging to other
+  parties — Nura Software (nurasoftware, a Laravel website builder), nura.js (nura-ia, an agent-UI bridge),
+  an unrelated `nura` Python autograd framework, and NordicID's NUR RFID reader API. NONE of these are Nura
+  Bio the biopharmaceutical company, and none is wired into this profile. Recorded as an honest zero. NO
+  `SDKs` pointer is emitted in apis.yml, because there is no SDK to point at.
+packages: []
+false_positives_rejected:
+- name: nurasoftware / nura-web
+  where: https://github.com/nurasoftware
+  reason: >-
+    "Nura Software" — an unrelated company shipping an open-source Laravel website builder and a web
+    analytics tool. Different company, no relationship to Nura Bio.
+- name: nura.js
+  where: https://github.com/nura-ia/nura.js
+  reason: An unrelated agent-UI bridge library for the JavaScript ecosystem. Name collision only.
+- name: nura (autograd)
+  where: https://github.com/andrew-m-holmes/nura
+  reason: An unrelated personal Python autograd framework. Name collision only.
+- name: nur_nurapi_micro
+  where: https://github.com/NordicID/nur_nurapi_micro
+  reason: NordicID's NUR RFID reader API for microcontrollers. Unrelated acronym collision.
+consumption_guidance: >-
+  The content API catalogued in this repo is plain HTTP+JSON with no authentication, so no SDK is required
+  to consume it. Any WordPress REST client, or a bare HTTP request, works against
+  https://nurabio.com/wp-json. The generic community WordPress client libraries are not first-party to Nura
+  Bio and are deliberately not listed here as though they were.

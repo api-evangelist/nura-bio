@@ -1,0 +1,74 @@
+overlay: 1.0.0
+info:
+  title: Nura Bio Content API — API Evangelist enhancements
+  version: 1.0.0
+extends: ../openapi/nura-bio-content-api-openapi.yml
+x-api-evangelist:
+  generated: '2026-08-26'
+  method: generated
+  source: >-
+    API Evangelist enrichment pipeline. Captures the enhancements this pipeline applies on top of the
+    contract derived from https://nurabio.com/wp-json/. The base OpenAPI is never mutated; this overlay is
+    the record of what we added and why.
+  note: >-
+    Nura Bio publishes no OpenAPI, so there is no upstream provider document to overlay in the usual sense.
+    These actions document the provenance, agent-safety and consumption guidance API Evangelist attaches to
+    the derived contract.
+actions:
+- target: $.info
+  description: Record that this contract is a third-party derivation, not a provider-published document.
+  update:
+    x-provenance-class: derived-third-party
+    x-provider-publishes-openapi: false
+    x-derived-from: https://nurabio.com/wp-json/
+    x-derived-on: '2026-08-26'
+- target: $.info
+  description: State the agent-safety posture of the whole surface in one place.
+  update:
+    x-agentic-access:
+      read: open
+      write: none
+      consequence: none
+      escalation: none
+      note: >-
+        Every catalogued operation is a GET requiring no credentials, and the collection routes return
+        `Allow: GET` anonymously. There is no action an agent can take here with a side effect, so no
+        consequence class above `read` applies and no escalation path is needed.
+- target: $.servers[0]
+  description: Note that the base URL is the CMS of a marketing site, not a product API host.
+  update:
+    x-host-class: cms
+    x-note: >-
+      https://nurabio.com/wp-json is the WordPress REST root of Nura Bio's corporate website. There is no
+      api.nurabio.com or developer.nurabio.com — both are NXDOMAIN as of 2026-08-26.
+- target: $.paths['/wp/v2/portfolio'].get
+  description: >-
+    Flag the single non-obvious semantic in this contract — `portfolio` is the people directory, not a work
+    portfolio.
+  update:
+    x-semantic-note: >-
+      On this deployment the Avada theme `portfolio` custom post type carries the company people directory
+      (leadership, board of directors, founders and advisors), grouped by the `portfolio_entries` taxonomy.
+      An agent looking for Nura Bio's executive team must query this collection, NOT /wp/v2/users — the
+      users collection holds only the two content authors of the website.
+- target: $.paths['/wp/v2/tags'].get
+  description: Warn that this collection is registered but permanently empty on this deployment.
+  update:
+    x-empty-collection: true
+    x-note: >-
+      X-WP-Total was 0 on 2026-08-26. Nothing on this site is tagged, so filtering posts by `tags` will
+      always return an empty set. Use `categories` instead.
+- target: $.paths['/wp/v2/search'].get
+  description: Record the join semantics of the denormalised search projection.
+  update:
+    x-join-note: >-
+      Results carry {id, title, url, type, subtype}. `subtype` names the source collection (post, page or
+      portfolio) and `id` is the id within it — together they are the only key back into the full object.
+- target: $.components.schemas.RestError
+  description: Record the non-conformance an agent must handle.
+  update:
+    x-rfc9457: false
+    x-branch-on: code
+    x-note: >-
+      Not RFC 9457. There is no `type` URI, no application/problem+json media type, and `message` is
+      unstable English prose. Branch on the `code` slug only. See errors/nura-bio-problem-types.yml.

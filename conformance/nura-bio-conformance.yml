@@ -1,0 +1,127 @@
+generated: '2026-08-26'
+method: derived
+source: >-
+  openapi/nura-bio-content-api-openapi.yml + openapi/_original/nura-bio-wp-json-route-index.json + live
+  responses observed 2026-08-26 + a search of nurabio.com for published compliance claims
+note: >-
+  Cross-cutting and domain standard conformance for the Nura Bio content API, asserted only where the
+  contract itself demonstrates it. Nura Bio publishes no compliance claims, no certifications and no trust
+  centre, so NO `Compliance` and NO `TrustCenter` pointer is emitted in apis.yml. Domain-standard
+  conformance is REWARD-ONLY: no health-data interoperability standard is claimed below, because none
+  applies to a corporate marketing CMS, and inventing one to fill the slot is out of bounds.
+standards:
+- id: oauth2
+  conforms: false
+  evidence: >-
+    No oauth2 securityScheme in the contract and no /.well-known/oauth-authorization-server (404,
+    2026-08-26). The route index advertises WordPress Application Passwords (HTTP Basic) only.
+- id: oidc
+  conforms: false
+  evidence: '/.well-known/openid-configuration returned 404 on 2026-08-26. No OIDC provider exists here.'
+- id: rfc9457
+  conforms: false
+  evidence: >-
+    Errors are the WordPress envelope {code, message, data:{status}} served as application/json. No
+    application/problem+json representation and no `type` URI. Observed on rest_invalid_param (400),
+    rest_forbidden (401), rest_post_invalid_id (404) and rest_no_route (404). See
+    errors/nura-bio-problem-types.yml.
+- id: rfc8288-web-linking
+  conforms: true
+  evidence: >-
+    A Link header carrying rel="next" is returned on paginated collections. Observed verbatim on
+    /wp-json/wp/v2/posts?per_page=1 as <https://nurabio.com/wp-json/wp/v2/posts?per_page=1&page=2>; rel="next".
+- id: pagination
+  conforms: true
+  evidence: >-
+    Page-number pagination with `page`, `per_page` (1..100, default 10) and `offset`, plus X-WP-Total and
+    X-WP-TotalPages response headers exposed cross-origin via Access-Control-Expose-Headers. Declared in
+    the route index args and confirmed live.
+- id: idempotency
+  conforms: false
+  evidence: >-
+    No idempotency key or request-deduplication contract exists. Not applicable in practice — the
+    catalogued surface is entirely GET and returns `Allow: GET` anonymously. Recorded as `na` in
+    conventions/nura-bio-conventions.yml rather than as a failure.
+- id: cors
+  conforms: true
+  evidence: >-
+    Preflight verified 2026-08-26 with Origin: https://example.com — the origin is reflected,
+    Access-Control-Allow-Credentials is true, and Access-Control-Expose-Headers advertises X-WP-Total,
+    X-WP-TotalPages and Link.
+- id: openapi
+  conforms: partial
+  evidence: >-
+    No OpenAPI is published by Nura Bio. The route index at /wp-json/ is a machine-readable route
+    description in WordPress's own format, carrying methods and fully typed args per endpoint; API
+    Evangelist derived openapi/nura-bio-content-api-openapi.yml (OpenAPI 3.1.0, 24 operations) from it.
+    Credit for the derivation belongs to this pipeline, not to the provider.
+- id: json-schema
+  conforms: partial
+  evidence: >-
+    The route index `args` blocks are JSON-Schema-shaped (type, enum, default, minimum, maximum, items) and
+    are the source of every parameter schema in the derived OpenAPI. Full resource schemas are not exposed
+    anonymously — /wp/v2/{type} OPTIONS schema output requires no auth in WordPress core but was not
+    published in the index for these routes.
+- id: oembed
+  conforms: true
+  evidence: >-
+    The oembed/1.0 namespace is registered and /wp-json/oembed/1.0/embed returned a valid oEmbed 1.0
+    document anonymously on 2026-08-26 (version 1.0, provider_name "Nura Bio™", provider_url, author_name,
+    thumbnail and html).
+- id: rss
+  conforms: true
+  evidence: 'https://nurabio.com/feed/ returned 200 — a WordPress RSS 2.0 feed of the news archive.'
+- id: robots-txt
+  conforms: true
+  evidence: >-
+    /robots.txt returned 200. It is the stale default Flywheel file and disallows only calendar/event query
+    permutations. It carries no AI-agent or crawler-specific directives, so agent access is neither granted
+    nor restricted explicitly.
+- id: llms-txt
+  conforms: true
+  evidence: >-
+    /llms.txt returned 200 (5,704 bytes, text/plain), saved verbatim to llms/nura-bio-llms.txt. Generated
+    by the All in One SEO plugin v5.0.0.1 rather than hand-authored, and it describes site content only —
+    it names no API, no endpoint and no developer surface.
+- id: a2a
+  conforms: false
+  evidence: >-
+    /.well-known/agent-card.json and /.well-known/agent.json both returned 404 on 2026-08-26. No agent card
+    exists, so no a2a/ artifact and no `AgentCard` pointer were written.
+- id: mcp
+  conforms: false
+  evidence: >-
+    No MCP server. The `wp-abilities/v1` namespace (the WordPress Abilities registry an MCP adapter would
+    expose) is registered but returns 401 rest_forbidden anonymously, and the AIOSEO MCP-adapter route
+    /wp-json/aioseo/v1/ai-agents/mcp-adapter/release also returns 401 — indicating the adapter is not
+    installed and exposed, only that the plugin can install one. /mcp and /wp-json/mcp both 404. See
+    mcp/nura-bio-mcp.yml.
+domain_standard:
+  regime: health
+  regime_basis: >-
+    The provider's sector tags (pharmaceuticals, life sciences, clinical trials) place it in the health
+    regulatory regime, whose standards shortlist in scoring.yml is fhir, smart-on-fhir, us-core, uscdi,
+    da-vinci, carin-blue-button, fhir-bulk-data, cds-hooks, c-cda, hl7-v2 and dicom.
+  declared: false
+  probed: [fhir, smart-on-fhir, us-core, uscdi, fhir-bulk-data, hl7-v2, dicom, cdisc-odm, cdisc-sdtm]
+  evidence: >-
+    None of these appear anywhere in the contract. There is no FHIR CapabilityStatement, no
+    /metadata endpoint, no FHIR resource type in any path, no SMART scope, no HL7 message type and no DICOM
+    surface. This is a correct and expected absence, not a gap: the catalogued API is a WordPress CMS
+    serving press releases, site pages, staff biographies and images. It carries no patient data, no
+    clinical-trial data and no protected health information of any kind, so no health-data
+    interoperability standard is applicable to it. Reward-only — nothing is asserted and nothing is
+    penalised.
+  scope_caveat: >-
+    Nura Bio is a real clinical-stage sponsor running human studies (NB-4746 in a global Phase 1b/2a ALS
+    study; NB-9402 in Phase 1a), so it certainly handles regulated clinical data internally. None of that
+    is exposed through any public API, and nothing in this repo speaks to its internal compliance posture.
+compliance_program:
+  published: false
+  certifications: []
+  trust_center: false
+  evidence: >-
+    Searched nurabio.com 2026-08-26 — no trust centre, no SOC 2 / ISO 27001 / HIPAA / GDPR / PCI statement,
+    no privacy policy and no terms of service page exist (/privacy-policy/, /privacy/, /terms/ and
+    /terms-of-use/ all returned 404). Confirmed against the provider's own llms.txt, which enumerates all
+    six site pages and lists none. 0-working/probe-security-programs.py returned vdp=none trust=none.

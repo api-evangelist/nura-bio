@@ -1,0 +1,158 @@
+generated: '2026-08-26'
+method: derived
+source: >-
+  openapi/nura-bio-content-api-openapi.yml + live anonymous response bodies and _links relations observed
+  on nurabio.com 2026-08-26
+note: >-
+  The entity-relationship graph of the Nura Bio content API, derived from the WordPress REST object shapes
+  this deployment actually returns. Relationships are read from the id-reference fields on each object and
+  from the HAL-style `_links` block WordPress emits, which names each relation explicitly. Counts are the
+  X-WP-Total values observed on 2026-08-26. Nura Bio publishes no object reference; there are no
+  provider-assigned id prefixes — every identifier is a bare WordPress auto-increment integer.
+identifiers:
+  scheme: integer
+  detail: >-
+    All entities are keyed by a bare auto-increment integer `id` unique within the WordPress posts or terms
+    table. There are no typed or prefixed identifiers, so an id is only meaningful together with its
+    collection — id 36 is a page, id 4 is a portfolio_entries term, and neither is self-describing.
+  secondary_key:
+    field: slug
+    detail: URL-safe unique string per collection; stable and human-readable, usable via the ?slug= filter.
+entities:
+- name: Post
+  collection: /wp/v2/posts
+  count_observed: 9
+  description: A company news item — press release, financing announcement, clinical milestone or publication.
+  key_fields: [id, date, modified, slug, status, link, title.rendered, content.rendered, excerpt.rendered, author, featured_media, categories, tags]
+- name: Page
+  collection: /wp/v2/pages
+  count_observed: 6
+  description: An evergreen site page. Home, About Us, Our Science, News & Literature, Join Us, Contact.
+  key_fields: [id, slug, link, title.rendered, content.rendered, parent, menu_order, featured_media, author]
+- name: PortfolioItem
+  collection: /wp/v2/portfolio
+  count_observed: 11
+  description: >-
+    A person profile. The Avada theme `portfolio` custom post type is used on this deployment as the
+    leadership / board / founders directory rather than as a work portfolio — each item is an individual
+    (CEO, CMO, CBO, board member, scientific founder or advisor).
+  key_fields: [id, slug, link, title.rendered, content.rendered, featured_media, portfolio_entries, tags]
+- name: PortfolioEntry
+  collection: /wp/v2/portfolio_entries
+  count_observed: 3
+  description: >-
+    A hierarchical taxonomy term grouping the people directory. The three terms are Leadership, Board of
+    Directors, and Founders and Advisors.
+  key_fields: [id, name, slug, parent, count, link, description]
+- name: MediaItem
+  collection: /wp/v2/media
+  count_observed: 84
+  description: >-
+    A media library attachment — logo assets, team headshots, scientific figures and press-release
+    documents.
+  key_fields: [id, slug, link, title.rendered, source_url, mime_type, media_type, alt_text, media_details.sizes, post]
+- name: Category
+  collection: /wp/v2/categories
+  count_observed: 4
+  description: A hierarchical `category` term applied to posts. News, Careers, Uncategorized and one unused term.
+  key_fields: [id, name, slug, parent, count, link, description]
+- name: Tag
+  collection: /wp/v2/tags
+  count_observed: 0
+  description: A flat `post_tag` term. Registered and reachable but empty — nothing on this site is tagged.
+  key_fields: [id, name, slug, count, link, description]
+- name: User
+  collection: /wp/v2/users
+  count_observed: 2
+  description: >-
+    The public author projection for a user who has published content. Anonymously this exposes only name,
+    slug, description, link and avatar_urls — never email or roles.
+  key_fields: [id, name, slug, link, description, avatar_urls]
+- name: SearchResult
+  collection: /wp/v2/search
+  count_observed: 12
+  description: >-
+    A uniform cross-type projection over posts, pages and portfolio items. Not a stored entity — a
+    denormalised view whose `id` points back into the collection named by `subtype`.
+  key_fields: [id, title, url, type, subtype]
+relationships:
+- from: Post
+  to: User
+  cardinality: belongs_to
+  via: author
+  evidence: '`author` integer field on Post; `_links.author` relation.'
+- from: Post
+  to: MediaItem
+  cardinality: belongs_to
+  via: featured_media
+  evidence: '`featured_media` integer field on Post; `_links["wp:featuredmedia"]` relation. 0 when unset.'
+- from: Post
+  to: Category
+  cardinality: has_many
+  via: categories
+  evidence: '`categories` integer array on Post; `_links["wp:term"]` relation with taxonomy=category.'
+- from: Post
+  to: Tag
+  cardinality: has_many
+  via: tags
+  evidence: >-
+    `tags` integer array on Post; `_links["wp:term"]` relation with taxonomy=post_tag. Always empty on this
+    deployment.
+- from: Category
+  to: Category
+  cardinality: belongs_to
+  via: parent
+  evidence: '`parent` integer field; 0 means top-level. The category taxonomy is hierarchical.'
+- from: PortfolioItem
+  to: PortfolioEntry
+  cardinality: has_many
+  via: portfolio_entries
+  evidence: >-
+    `portfolio_entries` integer array on PortfolioItem; the taxonomy is declared against the `portfolio`
+    type in /wp/v2/taxonomies. This is the edge that groups a person into Leadership, Board of Directors or
+    Founders and Advisors.
+- from: PortfolioItem
+  to: MediaItem
+  cardinality: belongs_to
+  via: featured_media
+  evidence: '`featured_media` integer field — the person''s headshot.'
+- from: PortfolioEntry
+  to: PortfolioEntry
+  cardinality: belongs_to
+  via: parent
+  evidence: '`parent` integer field; the taxonomy is declared hierarchical in /wp/v2/taxonomies.'
+- from: Page
+  to: Page
+  cardinality: belongs_to
+  via: parent
+  evidence: '`parent` integer field; 0 for all six pages on this deployment (the page tree is flat).'
+- from: Page
+  to: User
+  cardinality: belongs_to
+  via: author
+  evidence: '`author` integer field; `_links.author` relation.'
+- from: MediaItem
+  to: Post
+  cardinality: belongs_to
+  via: post
+  evidence: >-
+    `post` integer field naming the object the attachment was uploaded to; 0 for library items with no
+    parent.
+- from: SearchResult
+  to: Post
+  cardinality: has_one
+  via: id + subtype
+  evidence: >-
+    `subtype` names the source collection (post, page, portfolio) and `id` is the id within it. The only
+    join key the search projection offers.
+traversal_notes:
+- >-
+  `_embed=1` on any post-like collection inlines author, featured media and terms under `_embedded`,
+  collapsing the belongs_to and has_many hops above into a single request.
+- >-
+  There is no reverse index from User or MediaItem back to the objects that reference them; traverse by
+  filtering the owning collection (e.g. /wp/v2/posts?author=3).
+- >-
+  The people directory is the only non-obvious part of this graph: an agent looking for Nura Bio leadership
+  must know to query the `portfolio` type, not `users` — `users` holds the two content authors, not the
+  executive team.

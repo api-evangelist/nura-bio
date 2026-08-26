@@ -1,0 +1,44 @@
+generated: '2026-08-26'
+method: probed
+source: >-
+  live response headers observed on https://nurabio.com/wp-json/wp/v2/* 2026-08-26; no published limits
+  exist to search for
+limit_count: 0
+note: >-
+  Nura Bio documents no rate limits, because it publishes no developer documentation. No RateLimit-*,
+  X-RateLimit-* or Retry-After header was returned on any observed response, and no 429 was elicited during
+  this pass. Recorded as an honest zero. This is an absence of a PUBLISHED contract, not proof that the
+  surface is unmetered: the site sits behind Cloudflare and Kinsta, either of which can shed load or
+  challenge a client at the edge with no application-level signal, so a consumer has no runtime signal to
+  back off on and must self-throttle.
+published_limits: []
+response_headers_observed:
+  ratelimit_standard: []
+  ratelimit_vendor: []
+  retry_after: false
+  detail: >-
+    Full header set observed on GET /wp-json/wp/v2/posts?per_page=1 — date, content-type, cf-ray,
+    cf-cache-status, allow, link, server, vary, ki-cf-cache-status, x-edge-location-klb,
+    access-control-allow-headers, access-control-expose-headers, ki-cache-type, ki-edge, ki-origin,
+    x-content-type-options, x-frame-options, x-kinsta-cache, x-robots-tag, x-wp-total, x-wp-totalpages,
+    set-cookie, report-to, nel, alt-svc. No rate-limit header of any kind is present.
+exhaustion_behaviour:
+  status_code: null
+  detail: >-
+    Undocumented and not observed. API Evangelist does not probe to exhaustion — deliberately generating
+    429s against a company that never asked to be measured is out of bounds for this pipeline.
+edge_controls_present:
+  - layer: Cloudflare
+    evidence: 'server: cloudflare; cf-ray and cf-cache-status headers; __cf_bm bot-management cookie set on every response.'
+    detail: >-
+      The __cf_bm cookie indicates Cloudflare Bot Management is active. An automated client may be
+      challenged or blocked by the edge before any application limit applies, and that decision carries no
+      RateLimit header.
+  - layer: Kinsta
+    evidence: 'ki-edge, ki-origin, ki-cache-type, ki-cf-cache-status and x-kinsta-cache headers.'
+    detail: REST responses are served BYPASS at the Kinsta cache layer, so every call reaches the origin.
+guidance_for_agents: >-
+  Treat this surface as unmetered-but-unguaranteed. There are 9 posts, 6 pages, 11 portfolio items, 84
+  media items and 4 categories — the entire dataset is a few hundred KB and can be pulled in well under 20
+  requests at per_page=100. There is no reason for an agent to poll it aggressively, and no header will
+  tell it when it has gone too far.

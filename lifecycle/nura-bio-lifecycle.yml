@@ -1,0 +1,72 @@
+generated: '2026-08-26'
+method: probed
+source: >-
+  live probes of nurabio.com 2026-08-26 + openapi/_original/nura-bio-wp-json-route-index.json
+note: >-
+  Nura Bio publishes no versioning policy, no deprecation policy, no SLA, no status page and no API
+  changelog, because it runs no developer program. Recorded here as measured absence. NO `StatusPage` and
+  NO `Deprecation` pointer is emitted in apis.yml, because neither exists — emitting them would credit Nura
+  Bio with an operational posture it does not have.
+versioning:
+  scheme: uri-path-namespace
+  current: wp/v2
+  policy_published: false
+  detail: >-
+    The version is a path namespace inherited from WordPress core and the installed plugins. Nura Bio does
+    not author or control this contract; wp/v2 has been the stable WordPress REST namespace since
+    WordPress 4.7 (2016). A WordPress core upgrade, a plugin upgrade, or a theme change on this site can
+    add, remove or alter routes with no notice to any consumer, because there is no consumer contract.
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  detail: >-
+    No Sunset or Deprecation response header was observed on any probed response, and no deprecation policy
+    page exists. No operation in the catalogued OpenAPI is marked deprecated.
+  deprecated_operations: []
+sla:
+  published: false
+  detail: No service level agreement, uptime commitment or support-response commitment is published.
+status_page:
+  present: false
+  probed:
+  - url: https://status.nurabio.com/
+    status: 0
+    note: NXDOMAIN — host does not resolve (verified 2026-08-26).
+  - url: https://nurabio.com/status/
+    status: 404
+  detail: >-
+    No status page exists on any conventional path. No pointer emitted.
+contract_discovery_subdomains:
+  note: >-
+    Probed 2026-08-26 as part of STEP 0b contract discovery — recorded here because a missing developer
+    subdomain is a lifecycle fact about the provider, not just a failed probe.
+  probed:
+  - host: api.nurabio.com
+    result: NXDOMAIN
+  - host: developer.nurabio.com
+    result: NXDOMAIN
+  - host: status.nurabio.com
+    result: NXDOMAIN
+changelog:
+  present: false
+  detail: >-
+    No API changelog. The company news archive at https://nurabio.com/news-and-literature/ is corporate
+    press-release news (financing, clinical milestones, publications), not a technical changelog, so it is
+    wired as `News` and `BlogRSS` rather than `ChangeLog`.
+support:
+  developer_support_channel: false
+  detail: >-
+    The only contact surface is the general corporate form at https://nurabio.com/contact/ (wired as
+    ContactForm). There is no developer support channel, forum, community or help centre, so no `Support`
+    pointer is emitted.
+observed_stability_signals:
+  content_freshness: >-
+    Most recent post 2026-06-22 (Series B). 9 posts spanning 2020-01 to 2026-06 — an actively maintained
+    corporate site.
+  platform: WordPress on Kinsta behind Cloudflare, All in One SEO 5.0.0.1, Avada theme.
+  migration_evidence: >-
+    Media `guid` values still reference proneurotech.flywheelsites.com and /robots.txt is still the default
+    Flywheel file, indicating a prior Flywheel deployment under the earlier ProNeuroTech name. Cosmetic
+    only; it does not affect the served contract.

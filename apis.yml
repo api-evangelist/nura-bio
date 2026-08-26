@@ -1,18 +1,97 @@
 aid: nura-bio
 name: Nura Bio
-description: 'Nura Bio is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Nura Bio, Inc. is a clinical-stage biopharmaceutical company headquartered in South San Francisco,
+  California, developing neuroprotective small-molecule medicines that halt neurodegeneration before it
+  progresses. Conceived in 2018 by The Column Group together with scientific founders Steve McKnight, PhD
+  and Marc Freeman, PhD, the company targets SARM1 — a neuronally enriched NAD hydrolase that acts as an
+  axon-intrinsic metabolic sensor and central driver of axonal degeneration — on the thesis that
+  intervening early in that pathway confers durable structural and functional neuroprotection across
+  peripheral, central and ocular nervous-system disorders. Its pipeline is led by NB-4746, a
+  first-generation oral, brain-penetrant, reversible orthosteric SARM1 inhibitor in a global Phase 1b/2a
+  study in ALS, and NB-9402, a mechanistically differentiated second-generation oral, covalent,
+  irreversible, allosteric inhibitor completing a Phase 1a healthy-volunteer study in 2026. Nura Bio
+  launched publicly in January 2020 with a $73 million Series A, extended that round with $68 million to
+  pass $140 million raised, and closed a $73.8 million Series B in June 2026 led by The Column Group with
+  Euclidean Capital, Samsara BioCapital and Sanofi Ventures; Shilpa Sambashivan, PhD, a co-founder and
+  its chief scientist, serves as CEO. Its science is published in NEURON and CELL REPORTS. Nura Bio runs
+  no developer program and publishes no product API, developer portal, API reference, SDK or pricing.
+  The only machine-readable surfaces reachable without credentials are a published llms.txt and the
+  WordPress REST content API behind nurabio.com, which serves the news archive, site pages, people
+  directory and media library as JSON — both catalogued here.
+image: https://nurabio.com/wp-content/uploads/2020/07/NuraBio_full_logo_grey_TM-1-1-1030x167.png
 url: https://raw.githubusercontent.com/api-evangelist/nura-bio/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
+x-tier: profiled
+x-tier-reason: enrichment-pipeline
 specificationVersion: '0.20'
 created: '2026-08-26'
 modified: '2026-08-26'
 tags:
 - Company
-apis: []
+- Biotechnology
+- Pharmaceuticals
+- Neuroscience
+- Neurodegeneration
+- Drug Discovery
+- Life Sciences
+- Clinical Trials
+- Rare Disease
+- Small Molecule Therapeutics
+- Content
+tags_raw:
+- Company
+- biotechnology
+- pharmaceuticals
+- neuroscience
+- neurodegeneration
+- drug-discovery
+- life-sciences
+- clinical-trials
+- rare-disease
+- small-molecule-therapeutics
+- content-api
+apis:
+- aid: nura-bio:nura-bio-content-api
+  name: Nura Bio Content API
+  description: >-
+    The anonymously readable WordPress REST content API behind nurabio.com. It serves the company news
+    archive (9 posts), the six evergreen site pages, the 11-profile leadership, board and founders
+    directory carried on the Avada `portfolio` custom post type, the 84-item media library, taxonomy
+    terms, the public author projection, and cross-type search as JSON. Nura Bio does not market or
+    document this as a product API; it is the WordPress CMS surface its own website is built on,
+    catalogued here because it is a real, credential-free, machine-readable interface. Twenty-four GET
+    operations were verified live on 2026-08-26; every write operation and the aioseo/v1,
+    wp-abilities/v1, wp-analytify/v1, duplicate-post/v1, wp-site-health/v1 and wp-block-editor/v1
+    namespaces are authentication-gated.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://nurabio.com/wp-json
+  tags:
+  - Content
+  - Search
+  - Media
+  - News
+  tags_raw:
+  - content
+  - search
+  - media
+  - news
+  properties:
+  - type: OpenAPI
+    url: openapi/nura-bio-content-api-openapi.yml
+  - type: Overlay
+    url: overlays/nura-bio-content-api-overlay.yaml
+  - type: Authentication
+    url: authentication/nura-bio-authentication.yml
+  - type: Conventions
+    url: conventions/nura-bio-conventions.yml
+  - type: ErrorCatalog
+    url: errors/nura-bio-problem-types.yml
+  - type: DataModel
+    url: data-model/nura-bio-data-model.yml
+  - type: RateLimits
+    url: rate-limits/nura-bio-rate-limits.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -20,4 +99,69 @@ maintainers:
   email: info@apis.io
 common:
 - type: Website
-  url: https://www.nasdaqprivatemarket.com/
+  url: https://nurabio.com/
+- type: About
+  url: https://nurabio.com/about-us/
+- type: Science
+  url: https://nurabio.com/our-science/
+- type: News
+  url: https://nurabio.com/news-and-literature/
+- type: BlogRSS
+  url: https://nurabio.com/feed/
+- type: Careers
+  url: https://nurabio.com/join-us/
+- type: ContactForm
+  url: https://nurabio.com/contact/
+- type: LinkedIn
+  url: https://www.linkedin.com/company/nurabio
+- type: LLMsTxt
+  url: llms/nura-bio-llms.txt
+- type: Authentication
+  url: authentication/nura-bio-authentication.yml
+- type: Conventions
+  url: conventions/nura-bio-conventions.yml
+- type: Conformance
+  url: conformance/nura-bio-conformance.yml
+- type: ErrorCatalog
+  url: errors/nura-bio-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/nura-bio-lifecycle.yml
+- type: DataModel
+  url: data-model/nura-bio-data-model.yml
+- type: RateLimits
+  url: rate-limits/nura-bio-rate-limits.yml
+- type: Plans
+  url: plans/nura-bio-plans-pricing.yml
+- type: Packages
+  url: packages/nura-bio-packages.yml
+- type: DomainSecurity
+  url: security/nura-bio-domain-security.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Overlay
+  url: overlays/nura-bio-content-api-overlay.yaml
+x-enrichment:
+  date: '2026-08-26'
+  status: enriched
+  artifacts_added: 20
+  pass: local-v1
+x-coverage:
+  state: covered
+  reason: no-machine-readable-spec
+  detail: >-
+    Nura Bio is a clinical-stage biopharmaceutical company with no developer program, no product API and no
+    published OpenAPI, but STEP 0b contract discovery did not come back empty: nurabio.com serves a
+    200 llms.txt and a 269-route WordPress REST index at /wp-json/, from which a 24-operation read-only
+    content API was derived and verified live.
+  evidence:
+  - url: https://nurabio.com/wp-json/
+    status: 200
+  - url: https://nurabio.com/llms.txt
+    status: 200
+  - url: https://nurabio.com/openapi.json
+    status: 404
+  - url: https://nurabio.com/.well-known/agent-card.json
+    status: 404
+  - url: https://nurabio.com/wp-json/mcp/mcp-adapter-default-server
+    status: 404
+  checked: '2026-08-26'

@@ -1,0 +1,44 @@
+generated: '2026-08-26'
+method: generated
+source: >-
+  Authored by the API Evangelist enrichment pipeline against openapi/nura-bio-content-api-openapi.yml,
+  which was derived from the live WordPress REST route index at https://nurabio.com/wp-json/ and verified
+  2026-08-26. Every operationId referenced by every skill below exists in that specification.
+note: >-
+  Nura Bio publishes no agent skills, no AGENTS.md and no llms-style tool guidance of its own — the
+  /llms.txt it serves is an All in One SEO page listing and names no API. These three skills are GENERATED
+  by API Evangelist, not provider-published, and they cover the only surface an agent can actually call:
+  the anonymous read-only content API. They exist because the single highest-value thing to tell an agent
+  about this provider is what it CANNOT do here — there is no product API, no write path, and the people
+  directory is not where an agent would look for it.
+api: nura-bio:nura-bio-content-api
+skills:
+- name: nura-bio-track-news-archive
+  file: nura-bio-track-news-archive.md
+  description: >-
+    Monitor the 9-item corporate news archive for financings, clinical milestones and publications, with
+    server-side change detection via modified_after and X-WP-Total.
+  operations: [listPosts, getPost, listCategories, getUser]
+- name: nura-bio-resolve-people-directory
+  file: nura-bio-resolve-people-directory.md
+  description: >-
+    Resolve leadership, board of directors, and founders and advisors from the `portfolio` custom post type
+    — explicitly NOT from /wp/v2/users, which is the trap on this deployment.
+  operations: [listPortfolioEntries, listPortfolioItems, getPortfolioItem, getMediaItem, listTypes]
+- name: nura-bio-search-and-resolve-content
+  file: nura-bio-search-and-resolve-content.md
+  description: >-
+    Cross-type full-text search over posts, pages and people, then resolve each {id, subtype} hit to its
+    full object. The general entry point.
+  operations: [search, getPost, getPage, getPortfolioItem, listPages]
+shared_constraints:
+  auth: 'none — send no credentials'
+  base_url: https://nurabio.com/wp-json
+  write_surface: 'none — every catalogued operation is a GET and `Allow: GET` is returned anonymously'
+  reversibility: 'na — nothing can be changed, so nothing needs undoing'
+  error_format: 'WordPress envelope {code, message, data:{status}}; NOT RFC 9457 — branch on `code`'
+  pagination: 'page / per_page (1..100, rejects above) / offset; X-WP-Total, X-WP-TotalPages, RFC 8288 Link'
+  rate_limits: 'none published, no RateLimit-* headers; Cloudflare bot management active — poll gently'
+  out_of_scope: >-
+    No clinical-trial data, no patient data, no product API. For NB-4746 / NB-9402 study records use
+    ClinicalTrials.gov.
