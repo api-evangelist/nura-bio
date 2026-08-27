@@ -53,35 +53,142 @@ tags_raw:
 - small-molecule-therapeutics
 - content-api
 apis:
-- aid: nura-bio:nura-bio-content-api
-  name: Nura Bio Content API
-  description: >-
-    The anonymously readable WordPress REST content API behind nurabio.com. It serves the company news
-    archive (9 posts), the six evergreen site pages, the 11-profile leadership, board and founders
-    directory carried on the Avada `portfolio` custom post type, the 84-item media library, taxonomy
-    terms, the public author projection, and cross-type search as JSON. Nura Bio does not market or
-    document this as a product API; it is the WordPress CMS surface its own website is built on,
-    catalogued here because it is a real, credential-free, machine-readable interface. Twenty-four GET
-    operations were verified live on 2026-08-26; every write operation and the aioseo/v1,
-    wp-abilities/v1, wp-analytify/v1, duplicate-post/v1, wp-site-health/v1 and wp-block-editor/v1
-    namespaces are authentication-gated.
+- aid: nura-bio:nura-bio-directory-api
+  name: Nura Bio Directory API
+  description: Public author projection for users who have published content.
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://nurabio.com/wp-json
   tags:
-  - Content
-  - Search
-  - Media
-  - News
-  tags_raw:
-  - content
-  - search
-  - media
-  - news
+  - directory
   properties:
   - type: OpenAPI
-    url: openapi/nura-bio-content-api-openapi.yml
-  - type: Overlay
-    url: overlays/nura-bio-content-api-overlay.yaml
+    url: openapi/nura-bio-directory-api-openapi.yml
+  - type: Authentication
+    url: authentication/nura-bio-authentication.yml
+  - type: Conventions
+    url: conventions/nura-bio-conventions.yml
+  - type: ErrorCatalog
+    url: errors/nura-bio-problem-types.yml
+  - type: DataModel
+    url: data-model/nura-bio-data-model.yml
+  - type: RateLimits
+    url: rate-limits/nura-bio-rate-limits.yml
+- aid: nura-bio:nura-bio-discovery-api
+  name: Nura Bio Discovery API
+  description: >-
+    Route, type, taxonomy, status and oEmbed discovery endpoints that describe the deployment itself.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://nurabio.com/wp-json
+  tags:
+  - discovery
+  properties:
+  - type: OpenAPI
+    url: openapi/nura-bio-discovery-api-openapi.yml
+  - type: Authentication
+    url: authentication/nura-bio-authentication.yml
+  - type: Conventions
+    url: conventions/nura-bio-conventions.yml
+  - type: ErrorCatalog
+    url: errors/nura-bio-problem-types.yml
+  - type: DataModel
+    url: data-model/nura-bio-data-model.yml
+  - type: RateLimits
+    url: rate-limits/nura-bio-rate-limits.yml
+- aid: nura-bio:nura-bio-media-api
+  name: Nura Bio Media API
+  description: >-
+    The media library: logo assets, team headshots, scientific figures and press-release documents.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://nurabio.com/wp-json
+  tags:
+  - media
+  properties:
+  - type: OpenAPI
+    url: openapi/nura-bio-media-api-openapi.yml
+  - type: Authentication
+    url: authentication/nura-bio-authentication.yml
+  - type: Conventions
+    url: conventions/nura-bio-conventions.yml
+  - type: ErrorCatalog
+    url: errors/nura-bio-problem-types.yml
+  - type: DataModel
+    url: data-model/nura-bio-data-model.yml
+  - type: RateLimits
+    url: rate-limits/nura-bio-rate-limits.yml
+- aid: nura-bio:nura-bio-pages-api
+  name: Nura Bio Pages API
+  description: >-
+    The six evergreen site pages: Home, About Us, Our Science, News & Literature, Join Us, Contact.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://nurabio.com/wp-json
+  tags:
+  - pages
+  properties:
+  - type: OpenAPI
+    url: openapi/nura-bio-pages-api-openapi.yml
+  - type: Authentication
+    url: authentication/nura-bio-authentication.yml
+  - type: Conventions
+    url: conventions/nura-bio-conventions.yml
+  - type: ErrorCatalog
+    url: errors/nura-bio-problem-types.yml
+  - type: DataModel
+    url: data-model/nura-bio-data-model.yml
+  - type: RateLimits
+    url: rate-limits/nura-bio-rate-limits.yml
+- aid: nura-bio:nura-bio-portfolio-api
+  name: Nura Bio Portfolio API
+  description: >-
+    The people directory — leadership, board of directors, and founders and advisors — carried on the
+    Avada theme `portfolio` custom post type and its `portfolio_entries` taxonomy.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://nurabio.com/wp-json
+  tags:
+  - portfolio
+  properties:
+  - type: OpenAPI
+    url: openapi/nura-bio-portfolio-api-openapi.yml
+  - type: Authentication
+    url: authentication/nura-bio-authentication.yml
+  - type: Conventions
+    url: conventions/nura-bio-conventions.yml
+  - type: ErrorCatalog
+    url: errors/nura-bio-problem-types.yml
+  - type: DataModel
+    url: data-model/nura-bio-data-model.yml
+  - type: RateLimits
+    url: rate-limits/nura-bio-rate-limits.yml
+- aid: nura-bio:nura-bio-posts-api
+  name: Nura Bio Posts API
+  description: >-
+    The company news archive — press releases and financing, clinical and publication announcements.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://nurabio.com/wp-json
+  tags:
+  - posts
+  properties:
+  - type: OpenAPI
+    url: openapi/nura-bio-posts-api-openapi.yml
+  - type: Authentication
+    url: authentication/nura-bio-authentication.yml
+  - type: Conventions
+    url: conventions/nura-bio-conventions.yml
+  - type: ErrorCatalog
+    url: errors/nura-bio-problem-types.yml
+  - type: DataModel
+    url: data-model/nura-bio-data-model.yml
+  - type: RateLimits
+    url: rate-limits/nura-bio-rate-limits.yml
+- aid: nura-bio:nura-bio-taxonomy-api
+  name: Nura Bio Taxonomy API
+  description: Category and tag terms applied to the news archive.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://nurabio.com/wp-json
+  tags:
+  - taxonomy
+  properties:
+  - type: OpenAPI
+    url: openapi/nura-bio-taxonomy-api-openapi.yml
   - type: Authentication
     url: authentication/nura-bio-authentication.yml
   - type: Conventions
