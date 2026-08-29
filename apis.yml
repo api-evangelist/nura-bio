@@ -19,6 +19,18 @@ description: >-
   The only machine-readable surfaces reachable without credentials are a published llms.txt and the
   WordPress REST content API behind nurabio.com, which serves the news archive, site pages, people
   directory and media library as JSON — both catalogued here.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://nurabio.com/wp-content/uploads/2020/07/NuraBio_full_logo_grey_TM-1-1-1030x167.png
 url: https://raw.githubusercontent.com/api-evangelist/nura-bio/refs/heads/main/apis.yml
 x-type: company
