@@ -1,0 +1,335 @@
+openapi: 3.2.0
+info:
+  title: Nura Bio Content Media API
+  version: wp/v2
+  summary: Anonymously readable WordPress REST content API behind nurabio.com.
+  description: The read-only content surface Nura Bio exposes at https://nurabio.com/wp-json. Nura Bio is a clinical-stage biopharmaceutical company in South San Francisco, California developing oral, brain-penetrant small-molecule inhibitors of SARM1 — a neuronally enriched NAD hydrolase that drives axon degeneration — for peripheral, central and ocular nervous-system disorders. Nura Bio runs no developer program and markets no product API. This document is an API Evangelist derivation of the WordPress `wp/v2` and `oembed/1.0` route index the site publishes at /wp-json/, restricted to the operations verified to return data anonymously on 2026-08-26. All write operations, `/wp/v2/settings`, the `aioseo/v1` plugin-administration namespace, the `wp-abilities/v1` abilities registry, the `wp-analytify/v1`, `duplicate-post/v1`, `wp-site-health/v1` and `wp-block-editor/v1` namespaces, and the autosave/revision subtrees are authentication-gated and deliberately excluded — see x-api-evangelist-provenance.
+  contact:
+    name: Nura Bio
+    url: https://nurabio.com/contact/
+  x-api-evangelist-provenance: 'Derived by the API Evangelist enrichment pipeline from the live WordPress REST route index at https://nurabio.com/wp-json/ (269 routes across 8 namespaces: oembed/1.0, aioseo/v1, duplicate-post/v1, wp-analytify/v1, wp/v2, wp-site-health/v1, wp-block-editor/v1, wp-abilities/v1), harvested verbatim to openapi/_original/nura-bio-wp-json-route-index.json and verified against live anonymous responses on 2026-08-26. Every query parameter below is copied from that route index `args` block for that endpoint — type, enum, default, minimum and maximum included — and every collection count quoted in a description was read from the X-WP-Total response header on that date. Nura Bio publishes no OpenAPI, no developer documentation and no API reference for this surface; the wp/v2 contract itself is defined upstream by the WordPress REST API handbook. The deployment is WordPress on Kinsta behind Cloudflare (`x-kinsta-cache` / `ki-edge` response headers), previously on Flywheel — the media `guid` values still carry the pre-rebrand proneurotech.flywheelsites.com origin and /robots.txt is still the stale default Flywheel file. The theme is Avada. API responses carry `x-robots-tag: noindex`. Nothing here was obtained with credentials.'
+servers:
+- url: https://nurabio.com/wp-json
+  description: Production content API
+tags:
+- name: media
+  description: 'The media library: logo assets, team headshots, scientific figures and press-release documents.'
+paths:
+  /wp/v2/media:
+    get:
+      tags:
+      - media
+      operationId: listMedia
+      summary: List media library items
+      description: 'Lists attachments in the media library — 84 items at harvest, including the corporate logo set, team headshots, scientific figures and press-release PDFs. Verified 200 anonymously on 2026-08-26 (X-WP-Total: 84).'
+      parameters:
+      - $ref: '#/components/parameters/Context'
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/PerPage'
+      - $ref: '#/components/parameters/Search'
+      - $ref: '#/components/parameters/After'
+      - $ref: '#/components/parameters/ModifiedAfter'
+      - $ref: '#/components/parameters/Author'
+      - $ref: '#/components/parameters/AuthorExclude'
+      - $ref: '#/components/parameters/Before'
+      - $ref: '#/components/parameters/ModifiedBefore'
+      - $ref: '#/components/parameters/Exclude'
+      - $ref: '#/components/parameters/Include'
+      - $ref: '#/components/parameters/SearchSemantics'
+      - $ref: '#/components/parameters/Offset'
+      - $ref: '#/components/parameters/Order'
+      - name: orderby
+        in: query
+        description: Sort collection by post attribute.
+        schema:
+          type: string
+          enum:
+          - author
+          - date
+          - id
+          - include
+          - modified
+          - parent
+          - relevance
+          - slug
+          - include_slugs
+          - title
+          default: date
+      - name: parent
+        in: query
+        description: Limit result set to items with particular parent IDs.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: parent_exclude
+        in: query
+        description: Limit result set to all items except those of a particular parent ID.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - $ref: '#/components/parameters/SearchColumns'
+      - $ref: '#/components/parameters/Slug'
+      - name: status
+        in: query
+        description: Limit result set to posts assigned one or more statuses.
+        schema:
+          type: array
+          default: inherit
+          items:
+            type: string
+            enum:
+            - inherit
+            - private
+            - trash
+      - name: media_type
+        in: query
+        description: Limit result set to attachments of a particular media type or media types.
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - image
+            - video
+            - text
+            - application
+            - audio
+      - name: mime_type
+        in: query
+        description: Limit result set to attachments of a particular MIME type or MIME types.
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          $ref: '#/components/responses/InvalidParam'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /wp/v2/media/{id}:
+    get:
+      tags:
+      - media
+      operationId: getMediaItem
+      summary: Get a media library item
+      description: Retrieves a single attachment by numeric id, including source_url and the generated size variants. Verified 200 anonymously on 2026-08-26 against id 838.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the resource.
+        schema:
+          type: integer
+      - $ref: '#/components/parameters/Context'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/InvalidParam'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  parameters:
+    Offset:
+      name: offset
+      in: query
+      description: Offset the result set by a specific number of items.
+      schema:
+        type: integer
+    Order:
+      name: order
+      in: query
+      description: Order sort attribute ascending or descending.
+      schema:
+        default: desc
+        enum:
+        - asc
+        - desc
+        type: string
+    ModifiedBefore:
+      name: modified_before
+      in: query
+      description: Limit response to posts modified before a given ISO8601 compliant date.
+      schema:
+        format: date-time
+        type: string
+    SearchColumns:
+      name: search_columns
+      in: query
+      description: Array of column names to be searched.
+      schema:
+        default: []
+        items:
+          enum:
+          - post_title
+          - post_content
+          - post_excerpt
+          type: string
+        type: array
+    Before:
+      name: before
+      in: query
+      description: Limit response to posts published before a given ISO8601 compliant date.
+      schema:
+        format: date-time
+        type: string
+    ModifiedAfter:
+      name: modified_after
+      in: query
+      description: Limit response to posts modified after a given ISO8601 compliant date.
+      schema:
+        format: date-time
+        type: string
+    Slug:
+      name: slug
+      in: query
+      description: Limit result set to posts with one or more specific slugs.
+      schema:
+        items:
+          type: string
+        type: array
+    SearchSemantics:
+      name: search_semantics
+      in: query
+      description: How to interpret the search input.
+      schema:
+        enum:
+        - exact
+        type: string
+    Page:
+      name: page
+      in: query
+      description: Current page of the collection.
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    After:
+      name: after
+      in: query
+      description: Limit response to posts published after a given ISO8601 compliant date.
+      schema:
+        format: date-time
+        type: string
+    Search:
+      name: search
+      in: query
+      description: Limit results to those matching a string.
+      schema:
+        type: string
+    AuthorExclude:
+      name: author_exclude
+      in: query
+      description: Ensure result set excludes posts assigned to specific authors.
+      schema:
+        default: []
+        items:
+          type: integer
+        type: array
+    Author:
+      name: author
+      in: query
+      description: Limit result set to posts assigned to specific authors.
+      schema:
+        default: []
+        items:
+          type: integer
+        type: array
+    Exclude:
+      name: exclude
+      in: query
+      description: Ensure result set excludes specific IDs.
+      schema:
+        default: []
+        items:
+          type: integer
+        type: array
+    Include:
+      name: include
+      in: query
+      description: Limit result set to specific IDs.
+      schema:
+        default: []
+        items:
+          type: integer
+        type: array
+    PerPage:
+      name: per_page
+      in: query
+      description: Maximum number of items to be returned in result set.
+      schema:
+        default: 10
+        maximum: 100
+        minimum: 1
+        type: integer
+    Context:
+      name: context
+      in: query
+      description: Scope under which the request is made; determines fields present in response.
+      schema:
+        default: view
+        enum:
+        - view
+        - embed
+        - edit
+        type: string
+  responses:
+    NotFound:
+      description: Resource not found (rest_post_invalid, rest_term_invalid, rest_user_invalid, rest_no_route).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestError'
+    InvalidParam:
+      description: rest_invalid_param — a query parameter failed validation (for example per_page above 100).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestError'
+    Forbidden:
+      description: rest_forbidden — the requested context or collection requires authentication.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestError'
+  schemas:
+    RestError:
+      type: object
+      description: The WordPress REST error envelope. It is NOT RFC 9457 application/problem+json; it is served as application/json.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error slug, e.g. rest_post_invalid.
+        message:
+          type: string
+          description: Human-readable message.
+        data:
+          type: object
+          description: Error detail. Always carries `status` (the HTTP status); carries `params` and `details` on validation failures.
+          properties:
+            status:
+              type: integer
+      required:
+      - code
+      - message
+      - data

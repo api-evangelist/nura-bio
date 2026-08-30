@@ -1,0 +1,321 @@
+openapi: 3.2.0
+info:
+  title: Nura Bio Content Taxonomy API
+  version: wp/v2
+  summary: Anonymously readable WordPress REST content API behind nurabio.com.
+  description: The read-only content surface Nura Bio exposes at https://nurabio.com/wp-json. Nura Bio is a clinical-stage biopharmaceutical company in South San Francisco, California developing oral, brain-penetrant small-molecule inhibitors of SARM1 — a neuronally enriched NAD hydrolase that drives axon degeneration — for peripheral, central and ocular nervous-system disorders. Nura Bio runs no developer program and markets no product API. This document is an API Evangelist derivation of the WordPress `wp/v2` and `oembed/1.0` route index the site publishes at /wp-json/, restricted to the operations verified to return data anonymously on 2026-08-26. All write operations, `/wp/v2/settings`, the `aioseo/v1` plugin-administration namespace, the `wp-abilities/v1` abilities registry, the `wp-analytify/v1`, `duplicate-post/v1`, `wp-site-health/v1` and `wp-block-editor/v1` namespaces, and the autosave/revision subtrees are authentication-gated and deliberately excluded — see x-api-evangelist-provenance.
+  contact:
+    name: Nura Bio
+    url: https://nurabio.com/contact/
+  x-api-evangelist-provenance: 'Derived by the API Evangelist enrichment pipeline from the live WordPress REST route index at https://nurabio.com/wp-json/ (269 routes across 8 namespaces: oembed/1.0, aioseo/v1, duplicate-post/v1, wp-analytify/v1, wp/v2, wp-site-health/v1, wp-block-editor/v1, wp-abilities/v1), harvested verbatim to openapi/_original/nura-bio-wp-json-route-index.json and verified against live anonymous responses on 2026-08-26. Every query parameter below is copied from that route index `args` block for that endpoint — type, enum, default, minimum and maximum included — and every collection count quoted in a description was read from the X-WP-Total response header on that date. Nura Bio publishes no OpenAPI, no developer documentation and no API reference for this surface; the wp/v2 contract itself is defined upstream by the WordPress REST API handbook. The deployment is WordPress on Kinsta behind Cloudflare (`x-kinsta-cache` / `ki-edge` response headers), previously on Flywheel — the media `guid` values still carry the pre-rebrand proneurotech.flywheelsites.com origin and /robots.txt is still the stale default Flywheel file. The theme is Avada. API responses carry `x-robots-tag: noindex`. Nothing here was obtained with credentials.'
+servers:
+- url: https://nurabio.com/wp-json
+  description: Production content API
+tags:
+- name: taxonomy
+  description: Category and tag terms applied to the news archive.
+paths:
+  /wp/v2/categories:
+    get:
+      tags:
+      - taxonomy
+      operationId: listCategories
+      summary: List post categories
+      description: 'Lists terms in the hierarchical `category` taxonomy. Four exist on this deployment: News, Careers, Uncategorized and one unused term. Verified 200 anonymously on 2026-08-26 (X-WP-Total: 4).'
+      parameters:
+      - $ref: '#/components/parameters/Context'
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/PerPage'
+      - $ref: '#/components/parameters/Search'
+      - $ref: '#/components/parameters/Exclude'
+      - $ref: '#/components/parameters/Include'
+      - name: order
+        in: query
+        description: Order sort attribute ascending or descending.
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: asc
+      - name: orderby
+        in: query
+        description: Sort collection by term attribute.
+        schema:
+          type: string
+          enum:
+          - id
+          - include
+          - name
+          - slug
+          - include_slugs
+          - term_group
+          - description
+          - count
+          default: name
+      - name: hide_empty
+        in: query
+        description: Whether to hide terms not assigned to any posts.
+        schema:
+          type: boolean
+          default: false
+      - name: parent
+        in: query
+        description: Limit result set to terms assigned to a specific parent.
+        schema:
+          type: integer
+      - name: post
+        in: query
+        description: Limit result set to terms assigned to a specific post.
+        schema:
+          type: integer
+      - name: slug
+        in: query
+        description: Limit result set to terms with one or more specific slugs.
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          $ref: '#/components/responses/InvalidParam'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /wp/v2/categories/{id}:
+    get:
+      tags:
+      - taxonomy
+      operationId: getCategory
+      summary: Get a post category
+      description: Retrieves a single category term by numeric id. Verified 200 anonymously on 2026-08-26 against id 6 (Careers).
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the resource.
+        schema:
+          type: integer
+      - $ref: '#/components/parameters/Context'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/InvalidParam'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /wp/v2/tags:
+    get:
+      tags:
+      - taxonomy
+      operationId: listTags
+      summary: List post tags
+      description: 'Lists terms in the flat `post_tag` taxonomy. Registered and reachable, but empty on this deployment — no post or portfolio item carries a tag. Verified 200 anonymously on 2026-08-26 (X-WP-Total: 0).'
+      parameters:
+      - $ref: '#/components/parameters/Context'
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/PerPage'
+      - $ref: '#/components/parameters/Search'
+      - $ref: '#/components/parameters/Exclude'
+      - $ref: '#/components/parameters/Include'
+      - $ref: '#/components/parameters/Offset'
+      - name: order
+        in: query
+        description: Order sort attribute ascending or descending.
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: asc
+      - name: orderby
+        in: query
+        description: Sort collection by term attribute.
+        schema:
+          type: string
+          enum:
+          - id
+          - include
+          - name
+          - slug
+          - include_slugs
+          - term_group
+          - description
+          - count
+          default: name
+      - name: hide_empty
+        in: query
+        description: Whether to hide terms not assigned to any posts.
+        schema:
+          type: boolean
+          default: false
+      - name: post
+        in: query
+        description: Limit result set to terms assigned to a specific post.
+        schema:
+          type: integer
+      - name: slug
+        in: query
+        description: Limit result set to terms with one or more specific slugs.
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          $ref: '#/components/responses/InvalidParam'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /wp/v2/tags/{id}:
+    get:
+      tags:
+      - taxonomy
+      operationId: getTag
+      summary: Get a post tag
+      description: Retrieves a single `post_tag` term by numeric id. The collection is empty on this deployment, so every id returns 404 rest_term_invalid.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the resource.
+        schema:
+          type: integer
+      - $ref: '#/components/parameters/Context'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/InvalidParam'
+        '401':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  parameters:
+    Offset:
+      name: offset
+      in: query
+      description: Offset the result set by a specific number of items.
+      schema:
+        type: integer
+    Search:
+      name: search
+      in: query
+      description: Limit results to those matching a string.
+      schema:
+        type: string
+    Exclude:
+      name: exclude
+      in: query
+      description: Ensure result set excludes specific IDs.
+      schema:
+        default: []
+        items:
+          type: integer
+        type: array
+    Page:
+      name: page
+      in: query
+      description: Current page of the collection.
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    PerPage:
+      name: per_page
+      in: query
+      description: Maximum number of items to be returned in result set.
+      schema:
+        default: 10
+        maximum: 100
+        minimum: 1
+        type: integer
+    Include:
+      name: include
+      in: query
+      description: Limit result set to specific IDs.
+      schema:
+        default: []
+        items:
+          type: integer
+        type: array
+    Context:
+      name: context
+      in: query
+      description: Scope under which the request is made; determines fields present in response.
+      schema:
+        default: view
+        enum:
+        - view
+        - embed
+        - edit
+        type: string
+  responses:
+    InvalidParam:
+      description: rest_invalid_param — a query parameter failed validation (for example per_page above 100).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestError'
+    NotFound:
+      description: Resource not found (rest_post_invalid, rest_term_invalid, rest_user_invalid, rest_no_route).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestError'
+    Forbidden:
+      description: rest_forbidden — the requested context or collection requires authentication.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestError'
+  schemas:
+    RestError:
+      type: object
+      description: The WordPress REST error envelope. It is NOT RFC 9457 application/problem+json; it is served as application/json.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error slug, e.g. rest_post_invalid.
+        message:
+          type: string
+          description: Human-readable message.
+        data:
+          type: object
+          description: Error detail. Always carries `status` (the HTTP status); carries `params` and `details` on validation failures.
+          properties:
+            status:
+              type: integer
+      required:
+      - code
+      - message
+      - data
