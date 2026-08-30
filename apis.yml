@@ -42,16 +42,16 @@ created: '2026-08-26'
 modified: '2026-08-26'
 tags:
 - Company
-- Biotechnology
-- Pharmaceuticals
-- Neuroscience
-- Neurodegeneration
-- Drug Discovery
-- Life Sciences
-- Clinical Trials
-- Rare Disease
-- Small Molecule Therapeutics
-- Content
+- biotechnology
+- pharmaceuticals
+- neuroscience
+- neurodegeneration
+- drug-discovery
+- life-sciences
+- clinical-trials
+- rare-disease
+- small-molecule-therapeutics
+- content-api
 tags_raw:
 - Company
 - biotechnology
@@ -71,6 +71,8 @@ apis:
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://nurabio.com/wp-json
   tags:
+  - Directory
+  tags_raw:
   - directory
   properties:
   - type: OpenAPI
@@ -92,6 +94,8 @@ apis:
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://nurabio.com/wp-json
   tags:
+  - Discovery
+  tags_raw:
   - discovery
   properties:
   - type: OpenAPI
@@ -113,6 +117,8 @@ apis:
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://nurabio.com/wp-json
   tags:
+  - Media
+  tags_raw:
   - media
   properties:
   - type: OpenAPI
@@ -134,6 +140,8 @@ apis:
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://nurabio.com/wp-json
   tags:
+  - Pages
+  tags_raw:
   - pages
   properties:
   - type: OpenAPI
@@ -156,6 +164,8 @@ apis:
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://nurabio.com/wp-json
   tags:
+  - Portfolio
+  tags_raw:
   - portfolio
   properties:
   - type: OpenAPI
@@ -177,6 +187,8 @@ apis:
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://nurabio.com/wp-json
   tags:
+  - Posts
+  tags_raw:
   - posts
   properties:
   - type: OpenAPI
@@ -197,6 +209,8 @@ apis:
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://nurabio.com/wp-json
   tags:
+  - Taxonomy
+  tags_raw:
   - taxonomy
   properties:
   - type: OpenAPI
