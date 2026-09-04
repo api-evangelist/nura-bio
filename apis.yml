@@ -31,6 +31,21 @@ deliveryModel:
   - pricing
   generated: '2026-08-28'
   method: derived
+accessModel:
+  pricing: unknown
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Unknown
+  confidence: low
+  probe_state: covered
+  source:
+  - authentication
+  - rate-limits
+  - security
+  generated: '2026-09-03'
+  method: derived
 image: https://nurabio.com/wp-content/uploads/2020/07/NuraBio_full_logo_grey_TM-1-1-1030x167.png
 url: https://raw.githubusercontent.com/api-evangelist/nura-bio/refs/heads/main/apis.yml
 x-type: company
