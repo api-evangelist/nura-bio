@@ -3,7 +3,7 @@ info:
   title: Nura Bio Content Directory API
   version: wp/v2
   summary: Anonymously readable WordPress REST content API behind nurabio.com.
-  description: The read-only content surface Nura Bio exposes at https://nurabio.com/wp-json. Nura Bio is a clinical-stage biopharmaceutical company in South San Francisco, California developing oral, brain-penetrant small-molecule inhibitors of SARM1 — a neuronally enriched NAD hydrolase that drives axon degeneration — for peripheral, central and ocular nervous-system disorders. Nura Bio runs no developer program and markets no product API. This document is an API Evangelist derivation of the WordPress `wp/v2` and `oembed/1.0` route index the site publishes at /wp-json/, restricted to the operations verified to return data anonymously on 2026-08-26. All write operations, `/wp/v2/settings`, the `aioseo/v1` plugin-administration namespace, the `wp-abilities/v1` abilities registry, the `wp-analytify/v1`, `duplicate-post/v1`, `wp-site-health/v1` and `wp-block-editor/v1` namespaces, and the autosave/revision subtrees are authentication-gated and deliberately excluded — see x-api-evangelist-provenance.
+  description: The read-only content surface Nura Bio exposes at https://nurabio.com/wp-json.
   contact:
     name: Nura Bio
     url: https://nurabio.com/contact/
@@ -12,13 +12,13 @@ servers:
 - url: https://nurabio.com/wp-json
   description: Production content API
 tags:
-- name: directory
+- name: Directory
   description: Public author projection for users who have published content.
 paths:
   /wp/v2/users:
     get:
       tags:
-      - directory
+      - Directory
       operationId: listUsers
       summary: List content authors
       description: 'Lists users who have authored published content. Two are exposed anonymously on this deployment; the collection returns only the public author projection (name, slug, description, avatar), never email or role. Verified 200 anonymously on 2026-08-26 (X-WP-Total: 2).'
@@ -119,7 +119,7 @@ paths:
   /wp/v2/users/{id}:
     get:
       tags:
-      - directory
+      - Directory
       operationId: getUser
       summary: Get a content author
       description: Retrieves a single author by numeric id in the public `view` projection. Verified 200 anonymously on 2026-08-26 against id 3.
@@ -146,12 +146,17 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   parameters:
-    Offset:
-      name: offset
+    Context:
+      name: context
       in: query
-      description: Offset the result set by a specific number of items.
+      description: Scope under which the request is made; determines fields present in response.
       schema:
-        type: integer
+        default: view
+        enum:
+        - view
+        - embed
+        - edit
+        type: string
     Search:
       name: search
       in: query
@@ -167,23 +172,6 @@ components:
         items:
           type: integer
         type: array
-    Page:
-      name: page
-      in: query
-      description: Current page of the collection.
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
-    PerPage:
-      name: per_page
-      in: query
-      description: Maximum number of items to be returned in result set.
-      schema:
-        default: 10
-        maximum: 100
-        minimum: 1
-        type: integer
     Include:
       name: include
       in: query
@@ -193,20 +181,32 @@ components:
         items:
           type: integer
         type: array
-    Context:
-      name: context
+    PerPage:
+      name: per_page
       in: query
-      description: Scope under which the request is made; determines fields present in response.
+      description: Maximum number of items to be returned in result set.
       schema:
-        default: view
-        enum:
-        - view
-        - embed
-        - edit
-        type: string
+        default: 10
+        maximum: 100
+        minimum: 1
+        type: integer
+    Page:
+      name: page
+      in: query
+      description: Current page of the collection.
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    Offset:
+      name: offset
+      in: query
+      description: Offset the result set by a specific number of items.
+      schema:
+        type: integer
   responses:
-    InvalidParam:
-      description: rest_invalid_param — a query parameter failed validation (for example per_page above 100).
+    Forbidden:
+      description: rest_forbidden — the requested context or collection requires authentication.
       content:
         application/json:
           schema:
@@ -217,8 +217,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/RestError'
-    Forbidden:
-      description: rest_forbidden — the requested context or collection requires authentication.
+    InvalidParam:
+      description: rest_invalid_param — a query parameter failed validation (for example per_page above 100).
       content:
         application/json:
           schema:

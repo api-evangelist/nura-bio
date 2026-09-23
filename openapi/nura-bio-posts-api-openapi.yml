@@ -3,7 +3,7 @@ info:
   title: Nura Bio Content Posts API
   version: wp/v2
   summary: Anonymously readable WordPress REST content API behind nurabio.com.
-  description: The read-only content surface Nura Bio exposes at https://nurabio.com/wp-json. Nura Bio is a clinical-stage biopharmaceutical company in South San Francisco, California developing oral, brain-penetrant small-molecule inhibitors of SARM1 — a neuronally enriched NAD hydrolase that drives axon degeneration — for peripheral, central and ocular nervous-system disorders. Nura Bio runs no developer program and markets no product API. This document is an API Evangelist derivation of the WordPress `wp/v2` and `oembed/1.0` route index the site publishes at /wp-json/, restricted to the operations verified to return data anonymously on 2026-08-26. All write operations, `/wp/v2/settings`, the `aioseo/v1` plugin-administration namespace, the `wp-abilities/v1` abilities registry, the `wp-analytify/v1`, `duplicate-post/v1`, `wp-site-health/v1` and `wp-block-editor/v1` namespaces, and the autosave/revision subtrees are authentication-gated and deliberately excluded — see x-api-evangelist-provenance.
+  description: The read-only content surface Nura Bio exposes at https://nurabio.com/wp-json.
   contact:
     name: Nura Bio
     url: https://nurabio.com/contact/
@@ -12,13 +12,13 @@ servers:
 - url: https://nurabio.com/wp-json
   description: Production content API
 tags:
-- name: posts
+- name: Posts
   description: The company news archive — press releases and financing, clinical and publication announcements.
 paths:
   /wp/v2/posts:
     get:
       tags:
-      - posts
+      - Posts
       operationId: listPosts
       summary: List news posts
       description: 'Lists published posts. On this deployment the collection is the Nura Bio news archive — 9 items spanning the January 2020 launch announcement through the June 2026 $73.8M Series B. Paginated; X-WP-Total and X-WP-TotalPages are exposed via Access-Control-Expose-Headers. Verified 200 anonymously on 2026-08-26 (X-WP-Total: 9).'
@@ -155,7 +155,7 @@ paths:
   /wp/v2/posts/{id}:
     get:
       tags:
-      - posts
+      - Posts
       operationId: getPost
       summary: Get a news post
       description: Retrieves a single post by numeric id, including rendered title, content, excerpt and the AIOSEO metadata block. Verified 200 anonymously on 2026-08-26 against id 2507 (the Series B announcement).
@@ -192,11 +192,116 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   parameters:
+    Before:
+      name: before
+      in: query
+      description: Limit response to posts published before a given ISO8601 compliant date.
+      schema:
+        format: date-time
+        type: string
+    Exclude:
+      name: exclude
+      in: query
+      description: Ensure result set excludes specific IDs.
+      schema:
+        default: []
+        items:
+          type: integer
+        type: array
+    Page:
+      name: page
+      in: query
+      description: Current page of the collection.
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    After:
+      name: after
+      in: query
+      description: Limit response to posts published after a given ISO8601 compliant date.
+      schema:
+        format: date-time
+        type: string
+    SearchSemantics:
+      name: search_semantics
+      in: query
+      description: How to interpret the search input.
+      schema:
+        enum:
+        - exact
+        type: string
+    AuthorExclude:
+      name: author_exclude
+      in: query
+      description: Ensure result set excludes posts assigned to specific authors.
+      schema:
+        default: []
+        items:
+          type: integer
+        type: array
+    Search:
+      name: search
+      in: query
+      description: Limit results to those matching a string.
+      schema:
+        type: string
+    Context:
+      name: context
+      in: query
+      description: Scope under which the request is made; determines fields present in response.
+      schema:
+        default: view
+        enum:
+        - view
+        - embed
+        - edit
+        type: string
+    Author:
+      name: author
+      in: query
+      description: Limit result set to posts assigned to specific authors.
+      schema:
+        default: []
+        items:
+          type: integer
+        type: array
+    Include:
+      name: include
+      in: query
+      description: Limit result set to specific IDs.
+      schema:
+        default: []
+        items:
+          type: integer
+        type: array
     Offset:
       name: offset
       in: query
       description: Offset the result set by a specific number of items.
       schema:
+        type: integer
+    SearchColumns:
+      name: search_columns
+      in: query
+      description: Array of column names to be searched.
+      schema:
+        default: []
+        items:
+          enum:
+          - post_title
+          - post_content
+          - post_excerpt
+          type: string
+        type: array
+    PerPage:
+      name: per_page
+      in: query
+      description: Maximum number of items to be returned in result set.
+      schema:
+        default: 10
+        maximum: 100
+        minimum: 1
         type: integer
     Order:
       name: order
@@ -215,26 +320,6 @@ components:
       schema:
         format: date-time
         type: string
-    SearchColumns:
-      name: search_columns
-      in: query
-      description: Array of column names to be searched.
-      schema:
-        default: []
-        items:
-          enum:
-          - post_title
-          - post_content
-          - post_excerpt
-          type: string
-        type: array
-    Before:
-      name: before
-      in: query
-      description: Limit response to posts published before a given ISO8601 compliant date.
-      schema:
-        format: date-time
-        type: string
     ModifiedAfter:
       name: modified_after
       in: query
@@ -250,110 +335,6 @@ components:
         items:
           type: string
         type: array
-    SearchSemantics:
-      name: search_semantics
-      in: query
-      description: How to interpret the search input.
-      schema:
-        enum:
-        - exact
-        type: string
-    Page:
-      name: page
-      in: query
-      description: Current page of the collection.
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
-    After:
-      name: after
-      in: query
-      description: Limit response to posts published after a given ISO8601 compliant date.
-      schema:
-        format: date-time
-        type: string
-    Search:
-      name: search
-      in: query
-      description: Limit results to those matching a string.
-      schema:
-        type: string
-    AuthorExclude:
-      name: author_exclude
-      in: query
-      description: Ensure result set excludes posts assigned to specific authors.
-      schema:
-        default: []
-        items:
-          type: integer
-        type: array
-    Author:
-      name: author
-      in: query
-      description: Limit result set to posts assigned to specific authors.
-      schema:
-        default: []
-        items:
-          type: integer
-        type: array
-    Exclude:
-      name: exclude
-      in: query
-      description: Ensure result set excludes specific IDs.
-      schema:
-        default: []
-        items:
-          type: integer
-        type: array
-    Include:
-      name: include
-      in: query
-      description: Limit result set to specific IDs.
-      schema:
-        default: []
-        items:
-          type: integer
-        type: array
-    PerPage:
-      name: per_page
-      in: query
-      description: Maximum number of items to be returned in result set.
-      schema:
-        default: 10
-        maximum: 100
-        minimum: 1
-        type: integer
-    Context:
-      name: context
-      in: query
-      description: Scope under which the request is made; determines fields present in response.
-      schema:
-        default: view
-        enum:
-        - view
-        - embed
-        - edit
-        type: string
-  responses:
-    NotFound:
-      description: Resource not found (rest_post_invalid, rest_term_invalid, rest_user_invalid, rest_no_route).
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RestError'
-    InvalidParam:
-      description: rest_invalid_param — a query parameter failed validation (for example per_page above 100).
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RestError'
-    Forbidden:
-      description: rest_forbidden — the requested context or collection requires authentication.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RestError'
   schemas:
     RestError:
       type: object
@@ -375,3 +356,22 @@ components:
       - code
       - message
       - data
+  responses:
+    NotFound:
+      description: Resource not found (rest_post_invalid, rest_term_invalid, rest_user_invalid, rest_no_route).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestError'
+    Forbidden:
+      description: rest_forbidden — the requested context or collection requires authentication.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestError'
+    InvalidParam:
+      description: rest_invalid_param — a query parameter failed validation (for example per_page above 100).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestError'

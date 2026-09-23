@@ -3,7 +3,7 @@ info:
   title: Nura Bio Content Taxonomy API
   version: wp/v2
   summary: Anonymously readable WordPress REST content API behind nurabio.com.
-  description: The read-only content surface Nura Bio exposes at https://nurabio.com/wp-json. Nura Bio is a clinical-stage biopharmaceutical company in South San Francisco, California developing oral, brain-penetrant small-molecule inhibitors of SARM1 — a neuronally enriched NAD hydrolase that drives axon degeneration — for peripheral, central and ocular nervous-system disorders. Nura Bio runs no developer program and markets no product API. This document is an API Evangelist derivation of the WordPress `wp/v2` and `oembed/1.0` route index the site publishes at /wp-json/, restricted to the operations verified to return data anonymously on 2026-08-26. All write operations, `/wp/v2/settings`, the `aioseo/v1` plugin-administration namespace, the `wp-abilities/v1` abilities registry, the `wp-analytify/v1`, `duplicate-post/v1`, `wp-site-health/v1` and `wp-block-editor/v1` namespaces, and the autosave/revision subtrees are authentication-gated and deliberately excluded — see x-api-evangelist-provenance.
+  description: The read-only content surface Nura Bio exposes at https://nurabio.com/wp-json.
   contact:
     name: Nura Bio
     url: https://nurabio.com/contact/
@@ -12,13 +12,13 @@ servers:
 - url: https://nurabio.com/wp-json
   description: Production content API
 tags:
-- name: taxonomy
+- name: Taxonomy
   description: Category and tag terms applied to the news archive.
 paths:
   /wp/v2/categories:
     get:
       tags:
-      - taxonomy
+      - Taxonomy
       operationId: listCategories
       summary: List post categories
       description: 'Lists terms in the hierarchical `category` taxonomy. Four exist on this deployment: News, Careers, Uncategorized and one unused term. Verified 200 anonymously on 2026-08-26 (X-WP-Total: 4).'
@@ -94,7 +94,7 @@ paths:
   /wp/v2/categories/{id}:
     get:
       tags:
-      - taxonomy
+      - Taxonomy
       operationId: getCategory
       summary: Get a post category
       description: Retrieves a single category term by numeric id. Verified 200 anonymously on 2026-08-26 against id 6 (Careers).
@@ -122,7 +122,7 @@ paths:
   /wp/v2/tags:
     get:
       tags:
-      - taxonomy
+      - Taxonomy
       operationId: listTags
       summary: List post tags
       description: 'Lists terms in the flat `post_tag` taxonomy. Registered and reachable, but empty on this deployment — no post or portfolio item carries a tag. Verified 200 anonymously on 2026-08-26 (X-WP-Total: 0).'
@@ -194,7 +194,7 @@ paths:
   /wp/v2/tags/{id}:
     get:
       tags:
-      - taxonomy
+      - Taxonomy
       operationId: getTag
       summary: Get a post tag
       description: Retrieves a single `post_tag` term by numeric id. The collection is empty on this deployment, so every id returns 404 rest_term_invalid.
@@ -221,12 +221,17 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   parameters:
-    Offset:
-      name: offset
+    Context:
+      name: context
       in: query
-      description: Offset the result set by a specific number of items.
+      description: Scope under which the request is made; determines fields present in response.
       schema:
-        type: integer
+        default: view
+        enum:
+        - view
+        - embed
+        - edit
+        type: string
     Search:
       name: search
       in: query
@@ -242,23 +247,6 @@ components:
         items:
           type: integer
         type: array
-    Page:
-      name: page
-      in: query
-      description: Current page of the collection.
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
-    PerPage:
-      name: per_page
-      in: query
-      description: Maximum number of items to be returned in result set.
-      schema:
-        default: 10
-        maximum: 100
-        minimum: 1
-        type: integer
     Include:
       name: include
       in: query
@@ -268,20 +256,32 @@ components:
         items:
           type: integer
         type: array
-    Context:
-      name: context
+    PerPage:
+      name: per_page
       in: query
-      description: Scope under which the request is made; determines fields present in response.
+      description: Maximum number of items to be returned in result set.
       schema:
-        default: view
-        enum:
-        - view
-        - embed
-        - edit
-        type: string
+        default: 10
+        maximum: 100
+        minimum: 1
+        type: integer
+    Page:
+      name: page
+      in: query
+      description: Current page of the collection.
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    Offset:
+      name: offset
+      in: query
+      description: Offset the result set by a specific number of items.
+      schema:
+        type: integer
   responses:
-    InvalidParam:
-      description: rest_invalid_param — a query parameter failed validation (for example per_page above 100).
+    Forbidden:
+      description: rest_forbidden — the requested context or collection requires authentication.
       content:
         application/json:
           schema:
@@ -292,8 +292,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/RestError'
-    Forbidden:
-      description: rest_forbidden — the requested context or collection requires authentication.
+    InvalidParam:
+      description: rest_invalid_param — a query parameter failed validation (for example per_page above 100).
       content:
         application/json:
           schema:

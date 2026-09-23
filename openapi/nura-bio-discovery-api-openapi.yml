@@ -3,7 +3,7 @@ info:
   title: Nura Bio Content Discovery API
   version: wp/v2
   summary: Anonymously readable WordPress REST content API behind nurabio.com.
-  description: The read-only content surface Nura Bio exposes at https://nurabio.com/wp-json. Nura Bio is a clinical-stage biopharmaceutical company in South San Francisco, California developing oral, brain-penetrant small-molecule inhibitors of SARM1 — a neuronally enriched NAD hydrolase that drives axon degeneration — for peripheral, central and ocular nervous-system disorders. Nura Bio runs no developer program and markets no product API. This document is an API Evangelist derivation of the WordPress `wp/v2` and `oembed/1.0` route index the site publishes at /wp-json/, restricted to the operations verified to return data anonymously on 2026-08-26. All write operations, `/wp/v2/settings`, the `aioseo/v1` plugin-administration namespace, the `wp-abilities/v1` abilities registry, the `wp-analytify/v1`, `duplicate-post/v1`, `wp-site-health/v1` and `wp-block-editor/v1` namespaces, and the autosave/revision subtrees are authentication-gated and deliberately excluded — see x-api-evangelist-provenance.
+  description: The read-only content surface Nura Bio exposes at https://nurabio.com/wp-json.
   contact:
     name: Nura Bio
     url: https://nurabio.com/contact/
@@ -12,13 +12,13 @@ servers:
 - url: https://nurabio.com/wp-json
   description: Production content API
 tags:
-- name: discovery
+- name: Discovery
   description: Route, type, taxonomy, status and oEmbed discovery endpoints that describe the deployment itself.
 paths:
   /wp/v2/search:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: search
       summary: Search across content types
       description: 'Cross-type full-text search returning a uniform {id, title, url, type, subtype} projection over posts, pages and portfolio items. Verified 200 anonymously on 2026-08-26 for search=sarm1 (X-WP-Total: 12).'
@@ -81,7 +81,7 @@ paths:
   /wp/v2/types:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: listTypes
       summary: List registered post types
       description: Returns the registered post types and their REST base paths. This is how the `portfolio` people-directory type is discoverable. Verified 200 anonymously on 2026-08-26.
@@ -105,7 +105,7 @@ paths:
   /wp/v2/types/{type}:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: getType
       summary: Get a registered post type
       description: Returns one post type definition. Verified 200 anonymously on 2026-08-26 for type=portfolio.
@@ -133,7 +133,7 @@ paths:
   /wp/v2/taxonomies:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: listTaxonomies
       summary: List registered taxonomies
       description: Returns the registered taxonomies, the post types each applies to, and their REST base paths. Verified 200 anonymously on 2026-08-26.
@@ -162,7 +162,7 @@ paths:
   /wp/v2/taxonomies/{taxonomy}:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: getTaxonomy
       summary: Get a registered taxonomy
       description: Returns one taxonomy definition. Verified 200 anonymously on 2026-08-26 for taxonomy=portfolio_entries.
@@ -190,7 +190,7 @@ paths:
   /wp/v2/statuses:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: listStatuses
       summary: List post statuses
       description: Returns the registered post statuses. Anonymously only `publish` is visible. Verified 200 anonymously on 2026-08-26.
@@ -214,7 +214,7 @@ paths:
   /wp/v2/statuses/{status}:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: getStatus
       summary: Get a post status
       description: Returns one post status definition. Verified 200 anonymously on 2026-08-26 for status=publish.
@@ -242,7 +242,7 @@ paths:
   /oembed/1.0/embed:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: getOembed
       summary: Get an oEmbed representation
       description: Returns the oEmbed 1.0 representation of any URL on this site — provider name, author, thumbnail and embed HTML. Verified 200 anonymously on 2026-08-26 for url=https://nurabio.com/.
@@ -278,9 +278,62 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
+  parameters:
+    Context:
+      name: context
+      in: query
+      description: Scope under which the request is made; determines fields present in response.
+      schema:
+        default: view
+        enum:
+        - view
+        - embed
+        - edit
+        type: string
+    Search:
+      name: search
+      in: query
+      description: Limit results to those matching a string.
+      schema:
+        type: string
+    Exclude:
+      name: exclude
+      in: query
+      description: Ensure result set excludes specific IDs.
+      schema:
+        default: []
+        items:
+          type: integer
+        type: array
+    Include:
+      name: include
+      in: query
+      description: Limit result set to specific IDs.
+      schema:
+        default: []
+        items:
+          type: integer
+        type: array
+    PerPage:
+      name: per_page
+      in: query
+      description: Maximum number of items to be returned in result set.
+      schema:
+        default: 10
+        maximum: 100
+        minimum: 1
+        type: integer
+    Page:
+      name: page
+      in: query
+      description: Current page of the collection.
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
   responses:
-    InvalidParam:
-      description: rest_invalid_param — a query parameter failed validation (for example per_page above 100).
+    Forbidden:
+      description: rest_forbidden — the requested context or collection requires authentication.
       content:
         application/json:
           schema:
@@ -291,8 +344,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/RestError'
-    Forbidden:
-      description: rest_forbidden — the requested context or collection requires authentication.
+    InvalidParam:
+      description: rest_invalid_param — a query parameter failed validation (for example per_page above 100).
       content:
         application/json:
           schema:
@@ -318,56 +371,3 @@ components:
       - code
       - message
       - data
-  parameters:
-    Search:
-      name: search
-      in: query
-      description: Limit results to those matching a string.
-      schema:
-        type: string
-    Exclude:
-      name: exclude
-      in: query
-      description: Ensure result set excludes specific IDs.
-      schema:
-        default: []
-        items:
-          type: integer
-        type: array
-    Page:
-      name: page
-      in: query
-      description: Current page of the collection.
-      schema:
-        default: 1
-        minimum: 1
-        type: integer
-    PerPage:
-      name: per_page
-      in: query
-      description: Maximum number of items to be returned in result set.
-      schema:
-        default: 10
-        maximum: 100
-        minimum: 1
-        type: integer
-    Include:
-      name: include
-      in: query
-      description: Limit result set to specific IDs.
-      schema:
-        default: []
-        items:
-          type: integer
-        type: array
-    Context:
-      name: context
-      in: query
-      description: Scope under which the request is made; determines fields present in response.
-      schema:
-        default: view
-        enum:
-        - view
-        - embed
-        - edit
-        type: string

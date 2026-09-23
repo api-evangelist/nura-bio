@@ -1,0 +1,32 @@
+{
+  "provider": "nura-bio",
+  "sources": [
+    "_original/nura-bio-content-api-openapi.yml"
+  ],
+  "outputs": [
+    "nura-bio-directory-api-openapi.yml",
+    "nura-bio-discovery-api-openapi.yml",
+    "nura-bio-media-api-openapi.yml",
+    "nura-bio-pages-api-openapi.yml",
+    "nura-bio-portfolio-api-openapi.yml",
+    "nura-bio-posts-api-openapi.yml",
+    "nura-bio-taxonomy-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "nura-bio-content-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "nura-bio-directory-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "nura-bio-discovery-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "nura-bio-media-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "nura-bio-pages-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "nura-bio-portfolio-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "nura-bio-posts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "nura-bio-taxonomy-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}
