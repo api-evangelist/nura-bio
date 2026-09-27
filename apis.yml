@@ -80,166 +80,20 @@ tags_raw:
 - small-molecule-therapeutics
 - content-api
 apis:
-- aid: nura-bio:nura-bio-directory-api
-  name: Nura Bio Directory API
-  description: Public author projection for users who have published content.
-  humanURL: https://developer.wordpress.org/rest-api/
+- aid: nura-bio:nurabio-com-website-wordpress-rest
+  name: Nura Bio Website (WordPress REST)
+  description: 'The public WordPress REST API (wp-json) of the Nura Bio website at nurabio.com: the route
+    index of the site''s content management system, catalogued as one site surface rather than as separate
+    APIs.'
   baseURL: https://nurabio.com/wp-json
   tags:
-  - Directory
-  tags_raw:
-  - directory
+  - WordPress
+  x-surface: platform-generated
   properties:
-  - type: OpenAPI
-    url: openapi/nura-bio-directory-api-openapi.yml
-  - type: Authentication
-    url: authentication/nura-bio-authentication.yml
-  - type: Conventions
-    url: conventions/nura-bio-conventions.yml
-  - type: ErrorCatalog
-    url: errors/nura-bio-problem-types.yml
-  - type: DataModel
-    url: data-model/nura-bio-data-model.yml
-  - type: RateLimits
-    url: rate-limits/nura-bio-rate-limits.yml
-- aid: nura-bio:nura-bio-discovery-api
-  name: Nura Bio Discovery API
-  description: >-
-    Route, type, taxonomy, status and oEmbed discovery endpoints that describe the deployment itself.
-  humanURL: https://developer.wordpress.org/rest-api/
-  baseURL: https://nurabio.com/wp-json
-  tags:
-  - Discovery
-  tags_raw:
-  - discovery
-  properties:
-  - type: OpenAPI
-    url: openapi/nura-bio-discovery-api-openapi.yml
-  - type: Authentication
-    url: authentication/nura-bio-authentication.yml
-  - type: Conventions
-    url: conventions/nura-bio-conventions.yml
-  - type: ErrorCatalog
-    url: errors/nura-bio-problem-types.yml
-  - type: DataModel
-    url: data-model/nura-bio-data-model.yml
-  - type: RateLimits
-    url: rate-limits/nura-bio-rate-limits.yml
-- aid: nura-bio:nura-bio-media-api
-  name: Nura Bio Media API
-  description: >-
-    The media library: logo assets, team headshots, scientific figures and press-release documents.
-  humanURL: https://developer.wordpress.org/rest-api/
-  baseURL: https://nurabio.com/wp-json
-  tags:
-  - Media
-  tags_raw:
-  - media
-  properties:
-  - type: OpenAPI
-    url: openapi/nura-bio-media-api-openapi.yml
-  - type: Authentication
-    url: authentication/nura-bio-authentication.yml
-  - type: Conventions
-    url: conventions/nura-bio-conventions.yml
-  - type: ErrorCatalog
-    url: errors/nura-bio-problem-types.yml
-  - type: DataModel
-    url: data-model/nura-bio-data-model.yml
-  - type: RateLimits
-    url: rate-limits/nura-bio-rate-limits.yml
-- aid: nura-bio:nura-bio-pages-api
-  name: Nura Bio Pages API
-  description: >-
-    The six evergreen site pages: Home, About Us, Our Science, News & Literature, Join Us, Contact.
-  humanURL: https://developer.wordpress.org/rest-api/
-  baseURL: https://nurabio.com/wp-json
-  tags:
-  - Pages
-  tags_raw:
-  - pages
-  properties:
-  - type: OpenAPI
-    url: openapi/nura-bio-pages-api-openapi.yml
-  - type: Authentication
-    url: authentication/nura-bio-authentication.yml
-  - type: Conventions
-    url: conventions/nura-bio-conventions.yml
-  - type: ErrorCatalog
-    url: errors/nura-bio-problem-types.yml
-  - type: DataModel
-    url: data-model/nura-bio-data-model.yml
-  - type: RateLimits
-    url: rate-limits/nura-bio-rate-limits.yml
-- aid: nura-bio:nura-bio-portfolio-api
-  name: Nura Bio Portfolio API
-  description: >-
-    The people directory — leadership, board of directors, and founders and advisors — carried on the
-    Avada theme `portfolio` custom post type and its `portfolio_entries` taxonomy.
-  humanURL: https://developer.wordpress.org/rest-api/
-  baseURL: https://nurabio.com/wp-json
-  tags:
-  - Portfolio
-  tags_raw:
-  - portfolio
-  properties:
-  - type: OpenAPI
-    url: openapi/nura-bio-portfolio-api-openapi.yml
-  - type: Authentication
-    url: authentication/nura-bio-authentication.yml
-  - type: Conventions
-    url: conventions/nura-bio-conventions.yml
-  - type: ErrorCatalog
-    url: errors/nura-bio-problem-types.yml
-  - type: DataModel
-    url: data-model/nura-bio-data-model.yml
-  - type: RateLimits
-    url: rate-limits/nura-bio-rate-limits.yml
-- aid: nura-bio:nura-bio-posts-api
-  name: Nura Bio Posts API
-  description: >-
-    The company news archive — press releases and financing, clinical and publication announcements.
-  humanURL: https://developer.wordpress.org/rest-api/
-  baseURL: https://nurabio.com/wp-json
-  tags:
-  - Posts
-  tags_raw:
-  - posts
-  properties:
-  - type: OpenAPI
-    url: openapi/nura-bio-posts-api-openapi.yml
-  - type: Authentication
-    url: authentication/nura-bio-authentication.yml
-  - type: Conventions
-    url: conventions/nura-bio-conventions.yml
-  - type: ErrorCatalog
-    url: errors/nura-bio-problem-types.yml
-  - type: DataModel
-    url: data-model/nura-bio-data-model.yml
-  - type: RateLimits
-    url: rate-limits/nura-bio-rate-limits.yml
-- aid: nura-bio:nura-bio-taxonomy-api
-  name: Nura Bio Taxonomy API
-  description: Category and tag terms applied to the news archive.
-  humanURL: https://developer.wordpress.org/rest-api/
-  baseURL: https://nurabio.com/wp-json
-  tags:
-  - Taxonomy
-  tags_raw:
-  - taxonomy
-  properties:
-  - type: OpenAPI
-    url: openapi/nura-bio-taxonomy-api-openapi.yml
-  - type: Authentication
-    url: authentication/nura-bio-authentication.yml
-  - type: Conventions
-    url: conventions/nura-bio-conventions.yml
-  - type: ErrorCatalog
-    url: errors/nura-bio-problem-types.yml
-  - type: DataModel
-    url: data-model/nura-bio-data-model.yml
-  - type: RateLimits
-    url: rate-limits/nura-bio-rate-limits.yml
+  - type: Documentation
+    url: https://nurabio.com/wp-json
+  x-platform: wordpress
+  x-platform-surface: rest
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -286,8 +140,6 @@ common:
   url: security/nura-bio-domain-security.yml
 - type: AgentSkill
   url: skills/_index.yml
-- type: Overlay
-  url: overlays/nura-bio-content-api-overlay.yaml
 x-enrichment:
   date: '2026-08-26'
   status: enriched
